@@ -15,6 +15,7 @@ After=network-online.target
 
 [Service]
 Type=oneshot
+User=$USER
 WorkingDirectory=$BASE_DIR
 EnvironmentFile=$BASE_DIR/.env
 ExecStart=$BASE_DIR/run/run.sh
