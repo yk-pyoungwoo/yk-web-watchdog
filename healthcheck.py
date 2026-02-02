@@ -166,6 +166,86 @@ def should_send_daily_report() -> bool:
     
     return False
 
+def build_restart_report(last_run_time: str, current_time: str) -> Optional[str]:
+    """Build report for restart - shows history since last run"""
+    state = load_state()
+    global_state = state.get("_global", {})
+    check_history = global_state.get("_check_history", [])
+    
+    if not check_history:
+        return None
+    
+    # Filter entries since last run
+    # Parse last_run_time and current_time to compare
+    try:
+        last_dt = datetime.strptime(last_run_time, "%Y-%m-%d %H:%M:%S")
+        current_dt = datetime.strptime(current_time, "%Y-%m-%d %H:%M:%S")
+        
+        # Get entries between last_run and current (before current check)
+        filtered_entries = []
+        for entry in check_history:
+            entry_ts = entry.get("ts", "")
+            try:
+                entry_dt = datetime.strptime(entry_ts, "%Y-%m-%d %H:%M:%S")
+                if last_dt < entry_dt < current_dt:
+                    filtered_entries.append(entry)
+            except Exception:
+                continue
+    except Exception:
+        # If parsing fails, use all recent entries (last 10)
+        filtered_entries = check_history[-10:]
+    
+    if not filtered_entries:
+        return None
+    
+    # Analyze history
+    total_checks = len(filtered_entries)
+    failed_checks = sum(1 for e in filtered_entries if e.get("has_issue", False))
+    success_checks = total_checks - failed_checks
+    
+    # Group by time periods
+    issue_periods = []
+    current_issue_start = None
+    
+    for entry in filtered_entries:
+        ts = entry.get("ts", "")
+        has_issue = entry.get("has_issue", False)
+        
+        if has_issue:
+            if current_issue_start is None:
+                current_issue_start = ts
+        else:
+            if current_issue_start is not None:
+                issue_periods.append((current_issue_start, ts))
+                current_issue_start = None
+    
+    # If issue was ongoing
+    if current_issue_start is not None:
+        issue_periods.append((current_issue_start, "재기동 시점까지 진행 중"))
+    
+    # Build report
+    lines = [
+        "🔄 *재기동 리포트*",
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        f"⏸️  마지막 실행: `{last_run_time}`",
+        f"▶️  재기동 시간: `{current_time}`",
+        f"🔍 기간 내 검사 횟수: `{total_checks}`회",
+        f"✅ 성공: `{success_checks}`회 ({success_checks*100//total_checks if total_checks > 0 else 0}%)",
+        f"❌ 실패: `{failed_checks}`회 ({failed_checks*100//total_checks if total_checks > 0 else 0}%)",
+        ""
+    ]
+    
+    if issue_periods:
+        lines.append("⚠️ *문제 발생 시간대:*")
+        for start, end in issue_periods:
+            lines.append(f"   • `{start}` ~ `{end}`")
+    else:
+        lines.append("✅ *기간 내 문제 없음*")
+    
+    lines.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    
+    return "\n".join(lines)
+
 def build_daily_report() -> Optional[str]:
     """Build daily report from check history"""
     state = load_state()
@@ -930,9 +1010,33 @@ def build_slack_text(results: List[CurlMetrics], run_id: str, host: str) -> Tupl
 def main() -> None:
     host = socket.gethostname()
     run_id = datetime.now().strftime("%Y%m%d-%H%M%S")
+    current_time = now_local_str()
 
     append_log(f"[{now_local_str()}] run_id={run_id} start host={host}")
 
+    # Check for restart (gap in execution)
+    state = load_state()
+    global_state = state.get("_global", {})
+    last_check_time = global_state.get("last_check", None)
+    is_restart = False
+    
+    if last_check_time:
+        try:
+            # Parse last check time and current time
+            last_dt = datetime.strptime(last_check_time, "%Y-%m-%d %H:%M:%S")
+            current_dt = datetime.strptime(current_time, "%Y-%m-%d %H:%M:%S")
+            time_diff = (current_dt - last_dt).total_seconds()
+            
+            # If gap is more than 10 minutes (normal interval is 3 minutes), consider it a restart
+            if time_diff > 600:  # 10 minutes
+                is_restart = True
+        except Exception:
+            # If parsing fails, check if state file exists but is old
+            is_restart = True
+    else:
+        # No previous check - first run or after deletion
+        is_restart = True
+    
     # Check if we should send daily report
     if should_send_daily_report():
         daily_report = build_daily_report()
@@ -989,11 +1093,52 @@ def main() -> None:
     notify, reason = should_notify(results)
     append_log(f"[{now_local_str()}] run_id={run_id} notify={notify} reason={reason}")
 
+    # If restart detected, always send current status (even if no issue)
+    if is_restart:
+        notify = True
+        reason = "restart_detected"
+
     if not notify:
         append_log(f"[{now_local_str()}] run_id={run_id} end (no notify)")
         return
 
     text, cert_warn_hit = build_slack_text(results, run_id=run_id, host=host)
+    
+    # If restart detected, send restart report first, then current status
+    if is_restart and last_check_time:
+        restart_report = build_restart_report(last_check_time, current_time)
+        if restart_report:
+            # Send restart report first
+            prefix_lines_restart = []
+            prefix_lines_restart.append("🐕 *YK Watchdog*")
+            prefix_lines_restart.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            
+            if ENABLE_MENTIONS == "1" and ALWAYS_MENTION:
+                mentions = " ".join(ALWAYS_MENTION)
+                prefix_lines_restart.append(f"mentions: {mentions}")
+            
+            prefix_restart = "\n".join(prefix_lines_restart) + "\n\n"
+            
+            payload_restart = {
+                "text": prefix_restart + restart_report,
+                "username": SLACK_USERNAME,
+                "icon_emoji": get_rotating_emoji(),
+            }
+            
+            try:
+                slack_post(payload_restart)
+                append_log(f"[{now_local_str()}] run_id={run_id} restart_report=sent")
+            except Exception as e:
+                append_log(f"[{now_local_str()}] run_id={run_id} restart_report=failed err={repr(e)}")
+        
+        # Add restart indicator to current status message
+        restart_header = (
+            "🔄 *재기동 감지 - 현재 상태*\n"
+            f"⏸️  마지막 실행: `{last_check_time}`\n"
+            f"▶️  재기동 시간: `{current_time}`\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        )
+        text = restart_header + text
 
     # Mention logic with beautiful formatting:
     # - Only add mentions if ENABLE_MENTIONS is enabled

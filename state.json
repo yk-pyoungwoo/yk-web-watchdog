@@ -2,26 +2,26 @@
   "https://yklawfirm.co.kr/": {
     "ok": true,
     "http_code": 200,
-    "total_ms": 299,
-    "ts": "2026-02-02 10:39:04"
+    "total_ms": 126,
+    "ts": "2026-02-02 10:42:02"
   },
   "https://yklawfirm-crime.co.kr/": {
     "ok": true,
     "http_code": 200,
-    "total_ms": 236,
-    "ts": "2026-02-02 10:39:04"
+    "total_ms": 124,
+    "ts": "2026-02-02 10:42:02"
   },
   "https://yklawfirm-divorce.co.kr/": {
     "ok": true,
     "http_code": 200,
-    "total_ms": 341,
-    "ts": "2026-02-02 10:39:04"
+    "total_ms": 123,
+    "ts": "2026-02-02 10:42:02"
   },
   "https://yklawfirm-civil.co.kr/": {
     "ok": true,
     "http_code": 200,
-    "total_ms": 124,
-    "ts": "2026-02-02 10:39:04"
+    "total_ms": 123,
+    "ts": "2026-02-02 10:42:02"
   },
   "_global": {
     "_check_history": [
@@ -112,9 +112,31 @@
             "http_code": 200
           }
         }
+      },
+      {
+        "ts": "2026-02-02 10:42:02",
+        "has_issue": false,
+        "results": {
+          "https://yklawfirm.co.kr/": {
+            "ok": true,
+            "http_code": 200
+          },
+          "https://yklawfirm-crime.co.kr/": {
+            "ok": true,
+            "http_code": 200
+          },
+          "https://yklawfirm-divorce.co.kr/": {
+            "ok": true,
+            "http_code": 200
+          },
+          "https://yklawfirm-civil.co.kr/": {
+            "ok": true,
+            "http_code": 200
+          }
+        }
       }
     ],
     "has_issue": false,
-    "last_check": "2026-02-02 10:39:04"
+    "last_check": "2026-02-02 10:42:02"
   }
 }
