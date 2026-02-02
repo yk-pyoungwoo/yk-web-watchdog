@@ -5,7 +5,7 @@ import time
 import socket
 import subprocess
 from dataclasses import dataclass, asdict
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Dict, List, Optional, Tuple
 import urllib.parse
 import urllib.request
@@ -55,8 +55,12 @@ HC_TIMEOUT_SEC = env_float("HC_TIMEOUT_SEC", 5.0)
 HC_SLOW_MS = env_int("HC_SLOW_MS", 1500)
 
 REPORT_MODE = env_str("REPORT_MODE", "always").lower()
-if REPORT_MODE not in ("always", "on_change"):
-    raise RuntimeError("REPORT_MODE must be 'always' or 'on_change'")
+if REPORT_MODE not in ("always", "on_change", "on_error"):
+    raise RuntimeError("REPORT_MODE must be 'always', 'on_change', or 'on_error'")
+
+# Daily report settings
+DAILY_REPORT_TIME = env_str("DAILY_REPORT_TIME", "09:00")  # Format: HH:MM (24-hour)
+DAILY_REPORT_ENABLED = env_str("DAILY_REPORT_ENABLED", "1")  # Enable daily report (1=enabled, 0=disabled)
 
 STATE_FILE = env_str("STATE_FILE", "./state.json")
 
@@ -129,6 +133,101 @@ def now_local_str() -> str:
 
 def now_utc() -> datetime:
     return datetime.now(timezone.utc)
+
+def parse_time_str(time_str: str) -> Tuple[int, int]:
+    """Parse time string 'HH:MM' to (hour, minute)"""
+    try:
+        parts = time_str.split(":")
+        return int(parts[0]), int(parts[1])
+    except Exception:
+        return 9, 0  # Default to 9:00
+
+def should_send_daily_report() -> bool:
+    """Check if it's time to send daily report"""
+    if DAILY_REPORT_ENABLED != "1":
+        return False
+    
+    state = load_state()
+    global_state = state.get("_global", {})
+    last_report_date = global_state.get("last_daily_report_date", "")
+    today = today_ymd()
+    
+    # Already sent today
+    if last_report_date == today:
+        return False
+    
+    # Check if current time matches DAILY_REPORT_TIME
+    report_hour, report_minute = parse_time_str(DAILY_REPORT_TIME)
+    now = datetime.now()
+    
+    # Check if we're within the report time window (within 3 minutes)
+    if now.hour == report_hour and report_minute <= now.minute < report_minute + 3:
+        return True
+    
+    return False
+
+def build_daily_report() -> Optional[str]:
+    """Build daily report from check history"""
+    state = load_state()
+    global_state = state.get("_global", {})
+    check_history = global_state.get("_check_history", [])
+    
+    if not check_history:
+        return None
+    
+    # Filter yesterday's entries (approximately)
+    yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+    yesterday_entries = [e for e in check_history if e.get("ts", "").startswith(yesterday)]
+    
+    if not yesterday_entries:
+        return None
+    
+    # Analyze history
+    total_checks = len(yesterday_entries)
+    failed_checks = sum(1 for e in yesterday_entries if e.get("has_issue", False))
+    success_checks = total_checks - failed_checks
+    
+    # Group by time periods
+    issue_periods = []
+    current_issue_start = None
+    
+    for entry in yesterday_entries:
+        ts = entry.get("ts", "")
+        has_issue = entry.get("has_issue", False)
+        
+        if has_issue:
+            if current_issue_start is None:
+                current_issue_start = ts
+        else:
+            if current_issue_start is not None:
+                issue_periods.append((current_issue_start, ts))
+                current_issue_start = None
+    
+    # If issue was ongoing at end of day
+    if current_issue_start is not None:
+        issue_periods.append((current_issue_start, "진행 중"))
+    
+    # Build report
+    lines = [
+        "📊 *일일 리포트*",
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        f"📅 날짜: `{yesterday}`",
+        f"🔍 총 검사 횟수: `{total_checks}`회",
+        f"✅ 성공: `{success_checks}`회 ({success_checks*100//total_checks if total_checks > 0 else 0}%)",
+        f"❌ 실패: `{failed_checks}`회 ({failed_checks*100//total_checks if total_checks > 0 else 0}%)",
+        ""
+    ]
+    
+    if issue_periods:
+        lines.append("⚠️ *문제 발생 시간대:*")
+        for start, end in issue_periods:
+            lines.append(f"   • `{start}` ~ `{end}`")
+    else:
+        lines.append("✅ *전날 문제 없음*")
+    
+    lines.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    
+    return "\n".join(lines)
 
 
 # -----------------------------
@@ -426,7 +525,62 @@ def save_state(state: Dict[str, Dict]) -> None:
 def should_notify(results: List[CurlMetrics]) -> Tuple[bool, str]:
     if REPORT_MODE == "always":
         return True, "always"
+    
+    if REPORT_MODE == "on_error":
+        # on_error mode: only notify when there's an issue, and keep notifying while issue persists
+        prev = load_state()
+        new_state = prev.copy()
+        
+        # Check if there's any issue now
+        has_issue_now = any(not r.ok for r in results)
+        prev_has_issue = prev.get("_global", {}).get("has_issue", False)
+        
+        # Update state for each URL
+        for r in results:
+            key = r.url
+            new_state[key] = {
+                "ok": r.ok,
+                "http_code": r.http_code,
+                "total_ms": r.total_ms,
+                "ts": now_local_str(),
+            }
+        
+        # Update global issue state
+        if "_global" not in new_state:
+            new_state["_global"] = {}
+        
+        # Record check history for daily report
+        if "_check_history" not in new_state["_global"]:
+            new_state["_global"]["_check_history"] = []
+        
+        check_entry = {
+            "ts": now_local_str(),
+            "has_issue": has_issue_now,
+            "results": {r.url: {"ok": r.ok, "http_code": r.http_code} for r in results}
+        }
+        new_state["_global"]["_check_history"].append(check_entry)
+        
+        # Keep only last 24 hours of history (approximately 480 entries for 3-minute intervals)
+        max_history = 480
+        if len(new_state["_global"]["_check_history"]) > max_history:
+            new_state["_global"]["_check_history"] = new_state["_global"]["_check_history"][-max_history:]
+        
+        new_state["_global"]["has_issue"] = has_issue_now
+        new_state["_global"]["last_check"] = now_local_str()
+        
+        save_state(new_state)
+        
+        # Notify if: (1) issue just occurred, or (2) issue persists
+        if has_issue_now:
+            if not prev_has_issue:
+                return True, "issue_detected"
+            else:
+                return True, "issue_persists"
+        else:
+            # Issue resolved, but don't notify
+            return False, "issue_resolved"
 
+    # on_change mode (existing logic)
     prev = load_state()
     new_state = prev.copy()
     changes: List[str] = []
@@ -778,6 +932,39 @@ def main() -> None:
     run_id = datetime.now().strftime("%Y%m%d-%H%M%S")
 
     append_log(f"[{now_local_str()}] run_id={run_id} start host={host}")
+
+    # Check if we should send daily report
+    if should_send_daily_report():
+        daily_report = build_daily_report()
+        if daily_report:
+            # Send daily report
+            prefix_lines = []
+            prefix_lines.append("🐕 *YK Watchdog*")
+            prefix_lines.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            
+            if ENABLE_MENTIONS == "1" and ALWAYS_MENTION:
+                mentions = " ".join(ALWAYS_MENTION)
+                prefix_lines.append(f"mentions: {mentions}")
+            
+            prefix = "\n".join(prefix_lines) + "\n\n"
+            
+            payload = {
+                "text": prefix + daily_report,
+                "username": SLACK_USERNAME,
+                "icon_emoji": get_rotating_emoji(),
+            }
+            
+            try:
+                slack_post(payload)
+                # Mark daily report as sent
+                state = load_state()
+                if "_global" not in state:
+                    state["_global"] = {}
+                state["_global"]["last_daily_report_date"] = today_ymd()
+                save_state(state)
+                append_log(f"[{now_local_str()}] run_id={run_id} daily_report=sent")
+            except Exception as e:
+                append_log(f"[{now_local_str()}] run_id={run_id} daily_report=failed err={repr(e)}")
 
     results = [run_curl(url) for url in TARGETS]
 
