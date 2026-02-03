@@ -704,15 +704,18 @@ def should_notify(results: List[CurlMetrics]) -> Tuple[bool, str]:
         
         save_state(new_state)
         
-        # Notify if: (1) issue just occurred, or (2) issue persists
+        # Notify if: (1) issue just occurred, (2) issue persists, or (3) issue resolved
         if has_issue_now:
             if not prev_has_issue:
                 return True, "issue_detected"
             else:
                 return True, "issue_persists"
         else:
-            # Issue resolved, but don't notify
-            return False, "issue_resolved"
+            # Issue resolved - notify if there was a previous issue
+            if prev_has_issue:
+                return True, "issue_resolved"
+            else:
+                return False, "all_ok"
 
     # on_change mode (existing logic)
     prev = load_state()
@@ -1057,6 +1060,29 @@ def build_slack_text(results: List[CurlMetrics], run_id: str, host: str) -> Tupl
 
     return text, cert_warn_hit
 
+def build_resolved_text(results: List[CurlMetrics], run_id: str, host: str) -> str:
+    """Build Slack message text for resolved issues (all services are now OK)"""
+    header = (
+        f"✅ *All Services Recovered*\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+        f"🆔 `{run_id}` | 🖥️ `{host}` | 🕐 `{now_local_str()}`\n"
+    )
+    
+    lines: List[str] = [header, ""]
+    lines.append("🎉 *All monitored services are now operating normally.*\n")
+    
+    # List all URLs with their status
+    for r in results:
+        parsed = urllib.parse.urlparse(r.url)
+        domain = parsed.netloc or r.url
+        status_emoji = "🟢"
+        status_txt = str(r.http_code) if r.http_code is not None else "OK"
+        total_ms = f"{r.total_ms}ms" if r.total_ms is not None else "-"
+        
+        lines.append(f"{status_emoji} `{domain}` - Status: `{status_txt}` | Time: `{total_ms}`")
+    
+    return "\n".join(lines)
+
 
 # -----------------------------
 # Main
@@ -1185,7 +1211,14 @@ def main() -> None:
         append_log(f"[{now_local_str()}] run_id={run_id} end (no notify)")
         return
 
-    text, cert_warn_hit = build_slack_text(results, run_id=run_id, host=host)
+    # Build appropriate message based on reason
+    if reason == "issue_resolved":
+        # Use resolved message format for recovery notifications
+        text = build_resolved_text(results, run_id=run_id, host=host)
+        cert_warn_hit = False  # Don't ping channel for resolved issues
+    else:
+        # Use normal detailed message format for issues
+        text, cert_warn_hit = build_slack_text(results, run_id=run_id, host=host)
     
     # If restart detected, send restart report first, then current status
     if is_restart and last_check_time:
