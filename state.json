@@ -2,73 +2,29 @@
   "https://yklawfirm.co.kr/": {
     "ok": true,
     "http_code": 200,
-    "total_ms": 150,
-    "ts": "2026-03-03 18:03:02"
+    "total_ms": 164,
+    "ts": "2026-03-03 18:06:04"
   },
   "https://yklawfirm-crime.co.kr/": {
     "ok": true,
     "http_code": 200,
-    "total_ms": 154,
-    "ts": "2026-03-03 18:03:02"
+    "total_ms": 202,
+    "ts": "2026-03-03 18:06:04"
   },
   "https://yklawfirm-divorce.co.kr/": {
     "ok": true,
     "http_code": 200,
-    "total_ms": 152,
-    "ts": "2026-03-03 18:03:02"
+    "total_ms": 216,
+    "ts": "2026-03-03 18:06:04"
   },
   "https://yklawfirm-civil.co.kr/": {
     "ok": true,
     "http_code": 200,
-    "total_ms": 145,
-    "ts": "2026-03-03 18:03:02"
+    "total_ms": 168,
+    "ts": "2026-03-03 18:06:04"
   },
   "_global": {
     "_check_history": [
-      {
-        "ts": "2026-03-02 18:06:02",
-        "has_issue": false,
-        "results": {
-          "https://yklawfirm.co.kr/": {
-            "ok": true,
-            "http_code": 200
-          },
-          "https://yklawfirm-crime.co.kr/": {
-            "ok": true,
-            "http_code": 200
-          },
-          "https://yklawfirm-divorce.co.kr/": {
-            "ok": true,
-            "http_code": 200
-          },
-          "https://yklawfirm-civil.co.kr/": {
-            "ok": true,
-            "http_code": 200
-          }
-        }
-      },
-      {
-        "ts": "2026-03-02 18:09:02",
-        "has_issue": false,
-        "results": {
-          "https://yklawfirm.co.kr/": {
-            "ok": true,
-            "http_code": 200
-          },
-          "https://yklawfirm-crime.co.kr/": {
-            "ok": true,
-            "http_code": 200
-          },
-          "https://yklawfirm-divorce.co.kr/": {
-            "ok": true,
-            "http_code": 200
-          },
-          "https://yklawfirm-civil.co.kr/": {
-            "ok": true,
-            "http_code": 200
-          }
-        }
-      },
       {
         "ts": "2026-03-02 18:12:02",
         "has_issue": false,
@@ -10584,11 +10540,125 @@
             "http_code": 200
           }
         }
+      },
+      {
+        "ts": "2026-03-03 18:04:38",
+        "has_issue": false,
+        "results": {
+          "https://yklawfirm.co.kr/": {
+            "ok": true,
+            "http_code": 200
+          },
+          "https://yklawfirm-crime.co.kr/": {
+            "ok": true,
+            "http_code": 200
+          },
+          "https://yklawfirm-divorce.co.kr/": {
+            "ok": true,
+            "http_code": 200
+          },
+          "https://yklawfirm-civil.co.kr/": {
+            "ok": true,
+            "http_code": 200
+          },
+          "https://yklawfirm-inherit.co.kr/": {
+            "ok": true,
+            "http_code": 200
+          },
+          "https://yklawfirm-assault.co.kr/": {
+            "ok": true,
+            "http_code": 200
+          },
+          "https://yklawfirm-drug.co.kr/": {
+            "ok": true,
+            "http_code": 200
+          },
+          "https://yklawfirm-traffic.co.kr/": {
+            "ok": true,
+            "http_code": 200
+          },
+          "https://yklawfirm-school.co.kr/": {
+            "ok": true,
+            "http_code": 200
+          }
+        }
+      },
+      {
+        "ts": "2026-03-03 18:06:04",
+        "has_issue": false,
+        "results": {
+          "https://yklawfirm.co.kr/": {
+            "ok": true,
+            "http_code": 200
+          },
+          "https://yklawfirm-crime.co.kr/": {
+            "ok": true,
+            "http_code": 200
+          },
+          "https://yklawfirm-divorce.co.kr/": {
+            "ok": true,
+            "http_code": 200
+          },
+          "https://yklawfirm-civil.co.kr/": {
+            "ok": true,
+            "http_code": 200
+          },
+          "https://yklawfirm-inherit.co.kr/": {
+            "ok": true,
+            "http_code": 200
+          },
+          "https://yklawfirm-assault.co.kr/": {
+            "ok": true,
+            "http_code": 200
+          },
+          "https://yklawfirm-drug.co.kr/": {
+            "ok": true,
+            "http_code": 200
+          },
+          "https://yklawfirm-traffic.co.kr/": {
+            "ok": true,
+            "http_code": 200
+          },
+          "https://yklawfirm-school.co.kr/": {
+            "ok": true,
+            "http_code": 200
+          }
+        }
       }
     ],
     "has_issue": false,
-    "last_check": "2026-03-03 18:03:02",
+    "last_check": "2026-03-03 18:06:04",
     "force_restart_report": false,
     "last_daily_report_date": "2026-03-03"
+  },
+  "https://yklawfirm-inherit.co.kr/": {
+    "ok": true,
+    "http_code": 200,
+    "total_ms": 193,
+    "ts": "2026-03-03 18:06:04"
+  },
+  "https://yklawfirm-assault.co.kr/": {
+    "ok": true,
+    "http_code": 200,
+    "total_ms": 245,
+    "ts": "2026-03-03 18:06:04"
+  },
+  "https://yklawfirm-drug.co.kr/": {
+    "ok": true,
+    "http_code": 200,
+    "total_ms": 39,
+    "ts": "2026-03-03 18:06:04"
+  },
+  "https://yklawfirm-traffic.co.kr/": {
+    "ok": true,
+    "http_code": 200,
+    "total_ms": 44,
+    "ts": "2026-03-03 18:06:04"
+  },
+  "https://yklawfirm-school.co.kr/": {
+    "ok": true,
+    "http_code": 200,
+    "total_ms": 56,
+    "ts": "2026-03-03 18:06:04"
   }
 }
