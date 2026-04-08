@@ -3,9 +3,9 @@
 
 import json
 import os
+import re
 import socket
 import subprocess
-import time
 import urllib.parse
 import urllib.request
 from dataclasses import asdict, dataclass
@@ -14,7 +14,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 
 # =========================================================
-# Environment helpers
+# Env helpers
 # =========================================================
 def env_str(key: str, default: str = "") -> str:
     return os.environ.get(key, default).strip()
@@ -25,7 +25,7 @@ def env_int(key: str, default: int) -> int:
     try:
         return int(raw)
     except ValueError as exc:
-        raise RuntimeError(f"{key} must be int, got: {raw!r}") from exc
+        raise RuntimeError(f"{key} must be int, got {raw!r}") from exc
 
 
 def env_float(key: str, default: float) -> float:
@@ -33,7 +33,12 @@ def env_float(key: str, default: float) -> float:
     try:
         return float(raw)
     except ValueError as exc:
-        raise RuntimeError(f"{key} must be float, got: {raw!r}") from exc
+        raise RuntimeError(f"{key} must be float, got {raw!r}") from exc
+
+
+def env_bool(key: str, default: bool = False) -> bool:
+    raw = env_str(key, "1" if default else "0").lower()
+    return raw in {"1", "true", "yes", "y", "on"}
 
 
 def env_csv(key: str, default: str = "") -> List[str]:
@@ -43,13 +48,8 @@ def env_csv(key: str, default: str = "") -> List[str]:
     return [x.strip() for x in raw.split(",") if x.strip()]
 
 
-def env_bool(key: str, default: bool = False) -> bool:
-    raw = env_str(key, "1" if default else "0").lower()
-    return raw in {"1", "true", "yes", "y", "on"}
-
-
 # =========================================================
-# Configuration
+# Config
 # =========================================================
 SLACK_WEBHOOK_URL = env_str("SLACK_WEBHOOK_URL")
 if not SLACK_WEBHOOK_URL:
@@ -59,51 +59,247 @@ SLACK_USERNAME = env_str("SLACK_USERNAME", "YK Web Watchdog")
 SLACK_ICON_EMOJI = env_str("SLACK_ICON_EMOJI", ":dog:")
 SLACK_POST_MODE = env_str("SLACK_POST_MODE", "json").lower()
 if SLACK_POST_MODE not in {"json", "payload"}:
-    raise RuntimeError("SLACK_POST_MODE must be 'json' or 'payload'")
+    raise RuntimeError("SLACK_POST_MODE must be json or payload")
+
+SLACK_IMAGE_URL = env_str("SLACK_IMAGE_URL", "")
+SLACK_MAX_CHARS = env_int("SLACK_MAX_CHARS", 3500)
+SLACK_EMOJI_ROTATION = env_bool("SLACK_EMOJI_ROTATION", True)
 
 ENABLE_MENTIONS = env_bool("ENABLE_MENTIONS", True)
 ALWAYS_MENTION = env_csv("ALWAYS_MENTION", "@박평우")
 CHANNEL_MENTION_ON_FAIL = env_bool("CHANNEL_MENTION_ON_FAIL", True)
-SLACK_IMAGE_URL = env_str("SLACK_IMAGE_URL", "")
-SLACK_EMOJI_ROTATION = env_bool("SLACK_EMOJI_ROTATION", True)
 
-TARGETS_RAW = env_str("TARGETS")
-if not TARGETS_RAW:
-    raise RuntimeError("TARGETS is required")
-TARGETS = [u.strip() for u in TARGETS_RAW.split(",") if u.strip()]
-
-HC_TIMEOUT_SEC = env_float("HC_TIMEOUT_SEC", 5.0)
+HC_TIMEOUT_SEC = env_float("HC_TIMEOUT_SEC", 10.0)
+HC_CONNECT_TIMEOUT_SEC = env_float("HC_CONNECT_TIMEOUT_SEC", HC_TIMEOUT_SEC)
 HC_SLOW_MS = env_int("HC_SLOW_MS", 1500)
 
-REPORT_MODE = env_str("REPORT_MODE", "always").lower()
+REPORT_MODE = env_str("REPORT_MODE", "on_error").lower()
 if REPORT_MODE not in {"always", "on_change", "on_error"}:
-    raise RuntimeError("REPORT_MODE must be 'always', 'on_change', or 'on_error'")
-
-DAILY_REPORT_TIME = env_str("DAILY_REPORT_TIME", "09:00")
-DAILY_REPORT_ENABLED = env_bool("DAILY_REPORT_ENABLED", True)
+    raise RuntimeError("REPORT_MODE must be always/on_change/on_error")
 
 STATE_FILE = env_str("STATE_FILE", "./state.json")
 LOG_DIR = env_str("LOG_DIR", "./logs")
-SLACK_MAX_CHARS = env_int("SLACK_MAX_CHARS", 3500)
+MAX_HISTORY = env_int("MAX_HISTORY", 480)
+CLEANUP_DAYS = env_int("CLEANUP_DAYS", 7)
+
+DAILY_REPORT_ENABLED = env_bool("DAILY_REPORT_ENABLED", True)
+DAILY_REPORT_TIME = env_str("DAILY_REPORT_TIME", "09:00")
+
+CERT_WARN_DAYS = env_int("CERT_WARN_DAYS", 30)
+CERT_ALERT_DAYS = env_int("CERT_ALERT_DAYS", 7)
+CERT_MAX_SAN_ITEMS = env_int("CERT_MAX_SAN_ITEMS", 15)
 
 HEADER_KEYS = [
     h.lower()
     for h in env_csv(
         "HEADER_KEYS",
-        "strict-transport-security,cache-control,etag,last-modified,server,content-type,date,cf-cache-status,cf-ray,x-cache,via",
+        "strict-transport-security,cache-control,etag,last-modified,server,content-type,date,x-cache-status,via",
     )
 ]
 
-CERT_WARN_DAYS = env_int("CERT_WARN_DAYS", 30)
-CERT_ALERT_DAYS = env_int("CERT_ALERT_DAYS", 7)
-CERT_MAX_SAN_ITEMS = env_int("CERT_MAX_SAN_ITEMS", 15)
-MAX_REDIRECTS = env_int("MAX_REDIRECTS", 10)
-MAX_HISTORY = env_int("MAX_HISTORY", 480)
-CLEANUP_DAYS = env_int("CLEANUP_DAYS", 7)
+
+# =========================================================
+# Endpoint config
+# External VM only: redirect/service checks only
+# =========================================================
+DEFAULT_ENDPOINTS = [
+    {
+        "name": "brand-apex",
+        "display_name": "yklawfirm.co.kr",
+        "type": "redirect",
+        "url": "https://yklawfirm.co.kr/",
+        "expect_status": [301, 302, 307, 308],
+        "expect_location_prefix": "https://www.yklawfirm.co.kr/",
+        "dns_host": "yklawfirm.co.kr",
+        "ssl_host": "yklawfirm.co.kr",
+    },
+    {
+        "name": "brand-www",
+        "display_name": "www.yklawfirm.co.kr",
+        "type": "service",
+        "url": "https://www.yklawfirm.co.kr/",
+        "expect_status": [200],
+        "dns_host": "www.yklawfirm.co.kr",
+        "ssl_host": "www.yklawfirm.co.kr",
+    },
+
+    {
+        "name": "crime-apex",
+        "display_name": "yklawfirm-crime.co.kr",
+        "type": "redirect",
+        "url": "https://yklawfirm-crime.co.kr/",
+        "expect_status": [301, 302, 307, 308],
+        "expect_location_prefix": "https://www.yklawfirm-crime.co.kr/",
+        "dns_host": "yklawfirm-crime.co.kr",
+        "ssl_host": "yklawfirm-crime.co.kr",
+    },
+    {
+        "name": "crime-www",
+        "display_name": "www.yklawfirm-crime.co.kr",
+        "type": "service",
+        "url": "https://www.yklawfirm-crime.co.kr/",
+        "expect_status": [200],
+        "dns_host": "www.yklawfirm-crime.co.kr",
+        "ssl_host": "www.yklawfirm-crime.co.kr",
+    },
+
+    {
+        "name": "divorce-apex",
+        "display_name": "yklawfirm-divorce.co.kr",
+        "type": "redirect",
+        "url": "https://yklawfirm-divorce.co.kr/",
+        "expect_status": [301, 302, 307, 308],
+        "expect_location_prefix": "https://www.yklawfirm-divorce.co.kr/",
+        "dns_host": "yklawfirm-divorce.co.kr",
+        "ssl_host": "yklawfirm-divorce.co.kr",
+    },
+    {
+        "name": "divorce-www",
+        "display_name": "www.yklawfirm-divorce.co.kr",
+        "type": "service",
+        "url": "https://www.yklawfirm-divorce.co.kr/",
+        "expect_status": [200],
+        "dns_host": "www.yklawfirm-divorce.co.kr",
+        "ssl_host": "www.yklawfirm-divorce.co.kr",
+    },
+
+    {
+        "name": "civil-apex",
+        "display_name": "yklawfirm-civil.co.kr",
+        "type": "redirect",
+        "url": "https://yklawfirm-civil.co.kr/",
+        "expect_status": [301, 302, 307, 308],
+        "expect_location_prefix": "https://www.yklawfirm-civil.co.kr/",
+        "dns_host": "yklawfirm-civil.co.kr",
+        "ssl_host": "yklawfirm-civil.co.kr",
+    },
+    {
+        "name": "civil-www",
+        "display_name": "www.yklawfirm-civil.co.kr",
+        "type": "service",
+        "url": "https://www.yklawfirm-civil.co.kr/",
+        "expect_status": [200],
+        "dns_host": "www.yklawfirm-civil.co.kr",
+        "ssl_host": "www.yklawfirm-civil.co.kr",
+    },
+
+    {
+        "name": "assault-apex",
+        "display_name": "yklawfirm-assault.co.kr",
+        "type": "redirect",
+        "url": "https://yklawfirm-assault.co.kr/",
+        "expect_status": [301, 302, 307, 308],
+        "expect_location_prefix": "https://www.yklawfirm-assault.co.kr/",
+        "dns_host": "yklawfirm-assault.co.kr",
+        "ssl_host": "yklawfirm-assault.co.kr",
+    },
+    {
+        "name": "assault-www",
+        "display_name": "www.yklawfirm-assault.co.kr",
+        "type": "service",
+        "url": "https://www.yklawfirm-assault.co.kr/",
+        "expect_status": [200],
+        "dns_host": "www.yklawfirm-assault.co.kr",
+        "ssl_host": "www.yklawfirm-assault.co.kr",
+    },
+
+    {
+        "name": "inherit-apex",
+        "display_name": "yklawfirm-inherit.co.kr",
+        "type": "redirect",
+        "url": "https://yklawfirm-inherit.co.kr/",
+        "expect_status": [301, 302, 307, 308],
+        "expect_location_prefix": "https://www.yklawfirm-inherit.co.kr/",
+        "dns_host": "yklawfirm-inherit.co.kr",
+        "ssl_host": "yklawfirm-inherit.co.kr",
+    },
+    {
+        "name": "inherit-www",
+        "display_name": "www.yklawfirm-inherit.co.kr",
+        "type": "service",
+        "url": "https://www.yklawfirm-inherit.co.kr/",
+        "expect_status": [200],
+        "dns_host": "www.yklawfirm-inherit.co.kr",
+        "ssl_host": "www.yklawfirm-inherit.co.kr",
+    },
+
+    {
+        "name": "drug-apex",
+        "display_name": "yklawfirm-drug.co.kr",
+        "type": "redirect",
+        "url": "https://yklawfirm-drug.co.kr/",
+        "expect_status": [301, 302, 307, 308],
+        "expect_location_prefix": "https://www.yklawfirm-drug.co.kr/",
+        "dns_host": "yklawfirm-drug.co.kr",
+        "ssl_host": "yklawfirm-drug.co.kr",
+    },
+    {
+        "name": "drug-www",
+        "display_name": "www.yklawfirm-drug.co.kr",
+        "type": "service",
+        "url": "https://www.yklawfirm-drug.co.kr/",
+        "expect_status": [200],
+        "dns_host": "www.yklawfirm-drug.co.kr",
+        "ssl_host": "www.yklawfirm-drug.co.kr",
+    },
+
+    {
+        "name": "traffic-apex",
+        "display_name": "yklawfirm-traffic.co.kr",
+        "type": "redirect",
+        "url": "https://yklawfirm-traffic.co.kr/",
+        "expect_status": [301, 302, 307, 308],
+        "expect_location_prefix": "https://www.yklawfirm-traffic.co.kr/",
+        "dns_host": "yklawfirm-traffic.co.kr",
+        "ssl_host": "yklawfirm-traffic.co.kr",
+    },
+    {
+        "name": "traffic-www",
+        "display_name": "www.yklawfirm-traffic.co.kr",
+        "type": "service",
+        "url": "https://www.yklawfirm-traffic.co.kr/",
+        "expect_status": [200],
+        "dns_host": "www.yklawfirm-traffic.co.kr",
+        "ssl_host": "www.yklawfirm-traffic.co.kr",
+    },
+
+    {
+        "name": "school-apex",
+        "display_name": "yklawfirm-school.co.kr",
+        "type": "redirect",
+        "url": "https://yklawfirm-school.co.kr/",
+        "expect_status": [301, 302, 307, 308],
+        "expect_location_prefix": "https://www.yklawfirm-school.co.kr/",
+        "dns_host": "yklawfirm-school.co.kr",
+        "ssl_host": "yklawfirm-school.co.kr",
+    },
+    {
+        "name": "school-www",
+        "display_name": "www.yklawfirm-school.co.kr",
+        "type": "service",
+        "url": "https://www.yklawfirm-school.co.kr/",
+        "expect_status": [200],
+        "dns_host": "www.yklawfirm-school.co.kr",
+        "ssl_host": "www.yklawfirm-school.co.kr",
+    },
+]
+
+
+def load_endpoints() -> List[Dict[str, Any]]:
+    endpoints_json = env_str("ENDPOINTS_JSON", "")
+    if endpoints_json:
+        data = json.loads(endpoints_json)
+        if not isinstance(data, list):
+            raise RuntimeError("ENDPOINTS_JSON must be a JSON list")
+        return data
+    return DEFAULT_ENDPOINTS
+
+
+ENDPOINTS = load_endpoints()
 
 
 # =========================================================
-# Models
+# Dataclasses
 # =========================================================
 @dataclass
 class SslInfo:
@@ -116,9 +312,16 @@ class SslInfo:
 
 
 @dataclass
-class CurlMetrics:
-    url: str
-    http_code: Optional[int]
+class RedirectProbe:
+    status_code: Optional[int]
+    location: Optional[str]
+    ok: bool
+    err: Optional[str]
+
+
+@dataclass
+class FinalProbe:
+    status_code: Optional[int]
     ok: bool
     total_ms: Optional[int]
     dns_ms: Optional[int]
@@ -126,16 +329,36 @@ class CurlMetrics:
     tls_ms: Optional[int]
     ttfb_ms: Optional[int]
     remote_ip: Optional[str]
-    redirect_url: Optional[str]
-    redirect_chain: Optional[List[str]]
     err: Optional[str]
-    raw: Optional[Dict[str, Any]]
     headers: Optional[Dict[str, str]]
+    redirect_chain: Optional[List[str]]
+
+
+@dataclass
+class EndpointResult:
+    name: str
+    display_name: str
+    type: str
+    url: str
+    ok: bool
+    status_class: str
+    summary: str
+    expected: str
+    actual: str
+    dns_host: Optional[str]
+    dns_a: List[str]
+    dns_aaaa: List[str]
+    redirect_probe: Optional[RedirectProbe]
+    final_probe: Optional[FinalProbe]
     ssl: Optional[SslInfo]
+    consecutive_failures: int
+    first_failed_at: Optional[str]
+    last_ok_at: Optional[str]
+    checked_at: str
 
 
 # =========================================================
-# Time / file helpers
+# Time / files
 # =========================================================
 def now_local() -> datetime:
     return datetime.now()
@@ -157,18 +380,18 @@ def ensure_dir(path: str) -> None:
     os.makedirs(path, exist_ok=True)
 
 
-def log_file_path() -> str:
+def log_path() -> str:
     ensure_dir(LOG_DIR)
     return os.path.join(LOG_DIR, f"{today_ymd()}.log")
 
 
 def append_log(line: str) -> None:
-    with open(log_file_path(), "a", encoding="utf-8") as f:
+    with open(log_path(), "a", encoding="utf-8") as f:
         f.write(line.rstrip("\n") + "\n")
 
 
 # =========================================================
-# State helpers
+# State
 # =========================================================
 def load_state() -> Dict[str, Any]:
     try:
@@ -195,7 +418,46 @@ def get_global_state(state: Dict[str, Any]) -> Dict[str, Any]:
     return state["_global"]
 
 
-def add_check_history(state: Dict[str, Any], results: List[CurlMetrics], has_issue: bool) -> None:
+def update_endpoint_state(state: Dict[str, Any], result: EndpointResult) -> None:
+    prev = state.get(result.name, {})
+    if not isinstance(prev, dict):
+        prev = {}
+
+    prev_ok = prev.get("ok")
+    prev_first_failed_at = prev.get("first_failed_at")
+    prev_consecutive_failures = int(prev.get("consecutive_failures", 0) or 0)
+    prev_last_ok_at = prev.get("last_ok_at")
+
+    if result.ok:
+        consecutive_failures = 0
+        first_failed_at = None
+        last_ok_at = result.checked_at
+    else:
+        consecutive_failures = prev_consecutive_failures + 1 if prev_ok is False else 1
+        first_failed_at = prev_first_failed_at or result.checked_at
+        last_ok_at = prev_last_ok_at
+
+    result.consecutive_failures = consecutive_failures
+    result.first_failed_at = first_failed_at
+    result.last_ok_at = last_ok_at
+
+    state[result.name] = {
+        "name": result.name,
+        "display_name": result.display_name,
+        "ok": result.ok,
+        "type": result.type,
+        "status_class": result.status_class,
+        "summary": result.summary,
+        "checked_at": result.checked_at,
+        "first_failed_at": first_failed_at,
+        "last_ok_at": last_ok_at,
+        "consecutive_failures": consecutive_failures,
+        "actual": result.actual,
+        "expected": result.expected,
+    }
+
+
+def add_history(state: Dict[str, Any], results: List[EndpointResult], has_issue: bool) -> None:
     g = get_global_state(state)
     history = g.setdefault("_check_history", [])
     if not isinstance(history, list):
@@ -207,7 +469,11 @@ def add_check_history(state: Dict[str, Any], results: List[CurlMetrics], has_iss
             "ts": now_local_str(),
             "has_issue": has_issue,
             "results": {
-                r.url: {"ok": r.ok, "http_code": r.http_code, "total_ms": r.total_ms}
+                r.name: {
+                    "ok": r.ok,
+                    "type": r.type,
+                    "summary": r.summary,
+                }
                 for r in results
             },
         }
@@ -216,86 +482,132 @@ def add_check_history(state: Dict[str, Any], results: List[CurlMetrics], has_iss
         del history[:-MAX_HISTORY]
 
 
-# =========================================================
-# Cleanup helpers
-# =========================================================
 def cleanup_old_files_and_state() -> None:
-    cutoff_dt = now_local() - timedelta(days=CLEANUP_DAYS)
+    cutoff = now_local() - timedelta(days=CLEANUP_DAYS)
 
-    # log cleanup
     try:
         if os.path.isdir(LOG_DIR):
             for filename in os.listdir(LOG_DIR):
                 if not filename.endswith(".log"):
                     continue
-                date_str = filename[:-4]
                 try:
-                    file_dt = datetime.strptime(date_str, "%Y-%m-%d")
-                except ValueError:
+                    dt = datetime.strptime(filename[:-4], "%Y-%m-%d")
+                except Exception:
                     continue
-                if file_dt < cutoff_dt:
+                if dt < cutoff:
                     try:
                         os.remove(os.path.join(LOG_DIR, filename))
-                        append_log(f"[{now_local_str()}] cleanup: removed old log file {filename}")
-                    except OSError as exc:
-                        append_log(f"[{now_local_str()}] cleanup: failed to remove {filename}: {repr(exc)}")
-    except Exception as exc:
-        append_log(f"[{now_local_str()}] cleanup: log cleanup error: {repr(exc)}")
+                    except OSError:
+                        pass
+    except Exception:
+        pass
 
-    # state cleanup
     try:
         state = load_state()
         g = get_global_state(state)
         history = g.get("_check_history", [])
         if isinstance(history, list):
             filtered = []
-            removed = 0
-            for entry in history:
-                ts = entry.get("ts", "")
+            for item in history:
+                ts = str(item.get("ts", ""))
                 try:
                     dt = datetime.strptime(ts, "%Y-%m-%d %H:%M:%S")
-                    if dt >= cutoff_dt:
-                        filtered.append(entry)
-                    else:
-                        removed += 1
                 except Exception:
-                    filtered.append(entry)
-
-            if removed > 0:
-                g["_check_history"] = filtered
-                save_state(state)
-                append_log(f"[{now_local_str()}] cleanup: removed {removed} old history entries")
-    except Exception as exc:
-        append_log(f"[{now_local_str()}] cleanup: state cleanup error: {repr(exc)}")
-
-
-# =========================================================
-# Daily / restart report helpers
-# =========================================================
-def parse_time_str(time_str: str) -> Tuple[int, int]:
-    try:
-        hour_s, minute_s = time_str.split(":", 1)
-        hour = int(hour_s)
-        minute = int(minute_s)
-        if not (0 <= hour <= 23 and 0 <= minute <= 59):
-            raise ValueError
-        return hour, minute
+                    filtered.append(item)
+                    continue
+                if dt >= cutoff:
+                    filtered.append(item)
+            g["_check_history"] = filtered
+            save_state(state)
     except Exception:
-        return 9, 0
+        pass
+
+
+# =========================================================
+# Daily / restart reports
+# =========================================================
+def parse_time_str(s: str) -> Tuple[int, int]:
+    try:
+        h, m = s.split(":", 1)
+        hh = int(h)
+        mm = int(m)
+        if 0 <= hh <= 23 and 0 <= mm <= 59:
+            return hh, mm
+    except Exception:
+        pass
+    return 9, 0
 
 
 def should_send_daily_report(state: Dict[str, Any]) -> bool:
     if not DAILY_REPORT_ENABLED:
         return False
-
     g = get_global_state(state)
-    last_report_date = g.get("last_daily_report_date", "")
-    if last_report_date == today_ymd():
+    last_date = g.get("last_daily_report_date", "")
+    if last_date == today_ymd():
         return False
-
-    report_hour, report_minute = parse_time_str(DAILY_REPORT_TIME)
+    hour, minute = parse_time_str(DAILY_REPORT_TIME)
     now = now_local()
-    return now.hour == report_hour and report_minute <= now.minute < report_minute + 3
+    return now.hour == hour and minute <= now.minute < minute + 3
+
+
+def build_daily_report(state: Dict[str, Any]) -> Optional[str]:
+    g = get_global_state(state)
+    history = g.get("_check_history", [])
+    if not isinstance(history, list) or not history:
+        return None
+
+    yesterday = (now_local() - timedelta(days=1)).strftime("%Y-%m-%d")
+    rows = [x for x in history if str(x.get("ts", "")).startswith(yesterday)]
+    if not rows:
+        return None
+
+    total = len(rows)
+    fails = sum(1 for x in rows if x.get("has_issue"))
+    success = total - fails
+
+    lines = [
+        "📊 *일일 리포트*",
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        f"📅 날짜: `{yesterday}`",
+        f"🔍 총 검사 횟수: `{total}`회",
+        f"✅ 성공: `{success}`회",
+        f"❌ 실패: `{fails}`회",
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+    ]
+    return "\n".join(lines)
+
+
+def detect_restart(state: Dict[str, Any], run_id: str, current_time: str) -> Tuple[bool, Optional[str]]:
+    g = get_global_state(state)
+    last_check_time = g.get("last_check")
+    last_run_id = g.get("last_run_id")
+    force_restart = bool(g.get("force_restart_report", False))
+
+    if force_restart:
+        g["force_restart_report"] = False
+        return True, last_check_time
+
+    if not last_check_time:
+        return True, None
+
+    try:
+        last_dt = datetime.strptime(last_check_time, "%Y-%m-%d %H:%M:%S")
+        current_dt = datetime.strptime(current_time, "%Y-%m-%d %H:%M:%S")
+        if (current_dt - last_dt).total_seconds() > 300:
+            return True, last_check_time
+    except Exception:
+        return True, last_check_time
+
+    if last_run_id:
+        try:
+            prev_dt = datetime.strptime(last_run_id[:8] + last_run_id[9:], "%Y%m%d%H%M%S")
+            cur_dt = datetime.strptime(run_id[:8] + run_id[9:], "%Y%m%d%H%M%S")
+            if (cur_dt - prev_dt).total_seconds() > 300:
+                return True, last_check_time
+        except Exception:
+            pass
+
+    return False, last_check_time
 
 
 def build_restart_report(state: Dict[str, Any], last_run_time: str, current_time: str) -> Optional[str]:
@@ -307,172 +619,105 @@ def build_restart_report(state: Dict[str, Any], last_run_time: str, current_time
     try:
         last_dt = datetime.strptime(last_run_time, "%Y-%m-%d %H:%M:%S")
         current_dt = datetime.strptime(current_time, "%Y-%m-%d %H:%M:%S")
-        filtered_entries = []
+        rows = []
         for entry in history:
             ts = entry.get("ts", "")
             try:
-                entry_dt = datetime.strptime(ts, "%Y-%m-%d %H:%M:%S")
-                if last_dt < entry_dt < current_dt:
-                    filtered_entries.append(entry)
+                dt = datetime.strptime(ts, "%Y-%m-%d %H:%M:%S")
             except Exception:
                 continue
+            if last_dt < dt < current_dt:
+                rows.append(entry)
     except Exception:
-        filtered_entries = history[-10:]
+        rows = history[-10:]
 
-    if not filtered_entries:
+    if not rows:
         return None
 
-    total_checks = len(filtered_entries)
-    failed_checks = sum(1 for e in filtered_entries if e.get("has_issue", False))
-    success_checks = total_checks - failed_checks
-
-    issue_periods: List[Tuple[str, str]] = []
-    current_issue_start: Optional[str] = None
-
-    for entry in filtered_entries:
-        ts = entry.get("ts", "")
-        has_issue = bool(entry.get("has_issue", False))
-        if has_issue:
-            if current_issue_start is None:
-                current_issue_start = ts
-        else:
-            if current_issue_start is not None:
-                issue_periods.append((current_issue_start, ts))
-                current_issue_start = None
-
-    if current_issue_start is not None:
-        issue_periods.append((current_issue_start, "재기동 시점까지 진행 중"))
+    total = len(rows)
+    fails = sum(1 for x in rows if x.get("has_issue"))
+    success = total - fails
 
     lines = [
         "🔄 *재기동 리포트*",
         "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-        f"⏸️  마지막 실행: `{last_run_time}`",
-        f"▶️  재기동 시간: `{current_time}`",
-        f"🔍 기간 내 검사 횟수: `{total_checks}`회",
-        f"✅ 성공: `{success_checks}`회 ({(success_checks * 100 // total_checks) if total_checks else 0}%)",
-        f"❌ 실패: `{failed_checks}`회 ({(failed_checks * 100 // total_checks) if total_checks else 0}%)",
-        "",
-    ]
-
-    if issue_periods:
-        lines.append("⚠️ *문제 발생 시간대:*")
-        for start, end in issue_periods:
-            lines.append(f"   • `{start}` ~ `{end}`")
-    else:
-        lines.append("✅ *기간 내 문제 없음*")
-
-    lines.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-    return "\n".join(lines)
-
-
-def build_daily_report(state: Dict[str, Any]) -> Optional[str]:
-    g = get_global_state(state)
-    history = g.get("_check_history", [])
-    if not isinstance(history, list) or not history:
-        return None
-
-    yesterday = (now_local() - timedelta(days=1)).strftime("%Y-%m-%d")
-    entries = [e for e in history if str(e.get("ts", "")).startswith(yesterday)]
-    if not entries:
-        return None
-
-    total_checks = len(entries)
-    failed_checks = sum(1 for e in entries if e.get("has_issue", False))
-    success_checks = total_checks - failed_checks
-
-    issue_periods: List[Tuple[str, str]] = []
-    current_issue_start: Optional[str] = None
-
-    for entry in entries:
-        ts = entry.get("ts", "")
-        has_issue = bool(entry.get("has_issue", False))
-        if has_issue:
-            if current_issue_start is None:
-                current_issue_start = ts
-        else:
-            if current_issue_start is not None:
-                issue_periods.append((current_issue_start, ts))
-                current_issue_start = None
-
-    if current_issue_start is not None:
-        issue_periods.append((current_issue_start, "진행 중"))
-
-    lines = [
-        "📊 *일일 리포트*",
+        f"⏸️ 마지막 실행: `{last_run_time}`",
+        f"▶️ 재기동 시간: `{current_time}`",
+        f"🔍 기간 내 검사 횟수: `{total}`회",
+        f"✅ 성공: `{success}`회",
+        f"❌ 실패: `{fails}`회",
         "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-        f"📅 날짜: `{yesterday}`",
-        f"🔍 총 검사 횟수: `{total_checks}`회",
-        f"✅ 성공: `{success_checks}`회 ({(success_checks * 100 // total_checks) if total_checks else 0}%)",
-        f"❌ 실패: `{failed_checks}`회 ({(failed_checks * 100 // total_checks) if total_checks else 0}%)",
-        "",
     ]
-
-    if issue_periods:
-        lines.append("⚠️ *문제 발생 시간대:*")
-        for start, end in issue_periods:
-            lines.append(f"   • `{start}` ~ `{end}`")
-    else:
-        lines.append("✅ *전날 문제 없음*")
-
-    lines.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
     return "\n".join(lines)
 
 
 # =========================================================
-# Command helpers
+# Low-level helpers
 # =========================================================
 def run_cmd(cmd: List[str], timeout_sec: float) -> Tuple[int, str, str]:
-    proc = subprocess.run(
+    p = subprocess.run(
         cmd,
         capture_output=True,
         text=True,
         timeout=timeout_sec,
     )
-    return proc.returncode, proc.stdout or "", proc.stderr or ""
+    return p.returncode, p.stdout or "", p.stderr or ""
 
 
-def safe_int_ms(sec_str: str) -> Optional[int]:
+def safe_int_ms(raw: str) -> Optional[int]:
     try:
-        return int(float(sec_str) * 1000)
+        return int(float(raw) * 1000)
     except Exception:
         return None
 
 
-# =========================================================
-# DNS / header / redirect helpers
-# =========================================================
+def classify_error(err: Optional[str], status_code: Optional[int], endpoint_type: str) -> str:
+    txt = (err or "").lower()
+    if "resolving timed out" in txt or "could not resolve host" in txt:
+        return "DNS"
+    if "connection refused" in txt:
+        return "TCP"
+    if "ssl" in txt or "tls" in txt or "certificate" in txt:
+        return "TLS"
+    if "timed out" in txt:
+        return "TIMEOUT"
+    if endpoint_type == "redirect":
+        return "REDIRECT"
+    if status_code is not None and status_code >= 500:
+        return "HTTP"
+    return "HTTP"
+
+
 def dns_lookup(host: str) -> Dict[str, List[str]]:
-    res: Dict[str, List[str]] = {"A": [], "AAAA": []}
+    result: Dict[str, List[str]] = {"A": [], "AAAA": []}
     try:
         infos = socket.getaddrinfo(host, None)
         for fam, _, _, _, sockaddr in infos:
             ip = sockaddr[0]
-            if fam == socket.AF_INET and ip not in res["A"]:
-                res["A"].append(ip)
-            elif fam == socket.AF_INET6 and ip not in res["AAAA"]:
-                res["AAAA"].append(ip)
+            if fam == socket.AF_INET and ip not in result["A"]:
+                result["A"].append(ip)
+            elif fam == socket.AF_INET6 and ip not in result["AAAA"]:
+                result["AAAA"].append(ip)
     except Exception:
         pass
-    return res
+    return result
 
 
-def parse_headers_from_curl_dump(raw_header_text: str) -> Dict[str, str]:
-    text = raw_header_text.replace("\r\n", "\n").strip()
+def parse_headers_from_dump(raw_text: str) -> Dict[str, str]:
+    text = raw_text.replace("\r\n", "\n").strip()
     if not text:
         return {}
-
     blocks = text.split("\n\n")
-    last = blocks[-1]
-    lines = [ln.strip() for ln in last.split("\n") if ln.strip()]
+    last_block = blocks[-1]
+    lines = [ln.strip() for ln in last_block.split("\n") if ln.strip()]
     if not lines:
         return {}
-
     headers: Dict[str, str] = {}
     for line in lines[1:]:
         if ":" not in line:
             continue
-        key, value = line.split(":", 1)
-        headers[key.strip().lower()] = value.strip()
+        k, v = line.split(":", 1)
+        headers[k.strip().lower()] = v.strip()
     return headers
 
 
@@ -480,42 +725,7 @@ def normalize_url(base: str, location: str) -> str:
     return urllib.parse.urljoin(base, location)
 
 
-def extract_redirect_chain_from_header_dump(start_url: str, raw_header_text: str) -> List[str]:
-    text = raw_header_text.replace("\r\n", "\n").strip()
-    if not text:
-        return [start_url]
-
-    blocks = text.split("\n\n")
-    chain = [start_url]
-    current = start_url
-
-    for blk in blocks:
-        lines = [ln.strip() for ln in blk.split("\n") if ln.strip()]
-        if not lines:
-            continue
-
-        loc = None
-        for line in lines[1:]:
-            if line.lower().startswith("location:"):
-                loc = line.split(":", 1)[1].strip()
-                break
-
-        if loc:
-            nxt = normalize_url(current, loc)
-            chain.append(nxt)
-            current = nxt
-
-        if len(chain) >= MAX_REDIRECTS + 1:
-            break
-
-    deduped: List[str] = []
-    for url in chain:
-        if not deduped or deduped[-1] != url:
-            deduped.append(url)
-    return deduped
-
-
-def fetch_redirect_chain(url: str) -> Tuple[List[str], Optional[str]]:
+def fetch_header_chain(url: str) -> Tuple[str, Optional[str]]:
     cmd = [
         "curl",
         "-sS",
@@ -524,19 +734,45 @@ def fetch_redirect_chain(url: str) -> Tuple[List[str], Optional[str]]:
         "-",
         "-o",
         "/dev/null",
-        "--max-time",
-        str(HC_TIMEOUT_SEC),
-        "--connect-timeout",
-        str(HC_TIMEOUT_SEC),
+        "--max-time", str(HC_TIMEOUT_SEC),
+        "--connect-timeout", str(HC_CONNECT_TIMEOUT_SEC),
         url,
     ]
     try:
         rc, out, err = run_cmd(cmd, HC_TIMEOUT_SEC + 3.0)
         if rc != 0:
-            return [url], err.strip() or f"curl redirect rc={rc}"
-        return extract_redirect_chain_from_header_dump(url, out), None
+            return "", err.strip() or f"curl rc={rc}"
+        return out, None
     except Exception as exc:
-        return [url], f"exception={repr(exc)}"
+        return "", repr(exc)
+
+
+def extract_redirect_chain(start_url: str, raw_header_text: str) -> List[str]:
+    text = raw_header_text.replace("\r\n", "\n").strip()
+    if not text:
+        return [start_url]
+
+    chain = [start_url]
+    current = start_url
+    for block in text.split("\n\n"):
+        lines = [ln.strip() for ln in block.split("\n") if ln.strip()]
+        if not lines:
+            continue
+        loc = None
+        for line in lines[1:]:
+            if line.lower().startswith("location:"):
+                loc = line.split(":", 1)[1].strip()
+                break
+        if loc:
+            nxt = normalize_url(current, loc)
+            chain.append(nxt)
+            current = nxt
+
+    deduped = []
+    for item in chain:
+        if not deduped or deduped[-1] != item:
+            deduped.append(item)
+    return deduped
 
 
 def fetch_selected_headers(url: str) -> Dict[str, str]:
@@ -549,35 +785,33 @@ def fetch_selected_headers(url: str) -> Dict[str, str]:
         "-",
         "-o",
         "/dev/null",
-        "--max-time",
-        str(HC_TIMEOUT_SEC),
-        "--connect-timeout",
-        str(HC_TIMEOUT_SEC),
+        "--max-time", str(HC_TIMEOUT_SEC),
+        "--connect-timeout", str(HC_CONNECT_TIMEOUT_SEC),
         url,
     ]
     try:
         rc, out, err = run_cmd(cmd, HC_TIMEOUT_SEC + 3.0)
         if rc != 0:
-            return {"_error": err.strip() or f"curl -I rc={rc}"}
-        all_headers = parse_headers_from_curl_dump(out)
-        selected: Dict[str, str] = {}
-        for key in HEADER_KEYS:
-            if key in all_headers:
-                selected[key] = all_headers[key]
-        return selected if selected else all_headers
+            return {"_error": err.strip() or f"curl rc={rc}"}
+        headers = parse_headers_from_dump(out)
+        selected = {}
+        for k in HEADER_KEYS:
+            if k in headers:
+                selected[k] = headers[k]
+        return selected if selected else headers
     except Exception as exc:
-        return {"_error": f"exception={repr(exc)}"}
+        return {"_error": repr(exc)}
 
 
 # =========================================================
 # SSL helpers
 # =========================================================
-def parse_openssl_notafter_to_days_left(notafter: str) -> Optional[int]:
+def parse_notafter_days_left(notafter: str) -> Optional[int]:
     try:
-        value = notafter.replace("  ", " ").strip()
-        if value.endswith(" GMT"):
-            value = value[:-4].strip()
-        dt = datetime.strptime(value, "%b %d %H:%M:%S %Y").replace(tzinfo=timezone.utc)
+        text = notafter.replace("  ", " ").strip()
+        if text.endswith(" GMT"):
+            text = text[:-4].strip()
+        dt = datetime.strptime(text, "%b %d %H:%M:%S %Y").replace(tzinfo=timezone.utc)
         delta = dt - now_utc()
         return int(delta.total_seconds() // 86400)
     except Exception:
@@ -587,44 +821,26 @@ def parse_openssl_notafter_to_days_left(notafter: str) -> Optional[int]:
 def shorten_dn(dn: Optional[str]) -> Optional[str]:
     if not dn:
         return None
-
     parts = [p.strip() for p in dn.split(",")]
     keep = []
     for p in parts:
-        if p.startswith(("O =", "CN =", "O=", "CN=")):
+        if p.startswith(("O=", "CN=", "O =", "CN =")):
             keep.append(p.replace(" = ", "=").replace(" =", "=").replace("= ", "="))
-
     if keep:
         joined = ", ".join(keep)
         return joined if len(joined) <= 180 else joined[:180] + "…"
-
     return dn[:180] + ("…" if len(dn) > 180 else "")
 
 
 def ssl_info(host: str) -> SslInfo:
     try:
-        s_client = [
-            "openssl",
-            "s_client",
-            "-servername",
-            host,
-            "-connect",
-            f"{host}:443",
-            "-showcerts",
-        ]
-        x509 = [
-            "openssl",
-            "x509",
-            "-noout",
-            "-enddate",
-            "-issuer",
-            "-subject",
-            "-ext",
-            "subjectAltName",
-        ]
-
         p1 = subprocess.Popen(
-            s_client,
+            [
+                "openssl", "s_client",
+                "-servername", host,
+                "-connect", f"{host}:443",
+                "-showcerts",
+            ],
             stdin=subprocess.DEVNULL,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -640,7 +856,7 @@ def ssl_info(host: str) -> SslInfo:
             return SslInfo(None, None, None, None, None, None)
 
         p2 = subprocess.run(
-            x509,
+            ["openssl", "x509", "-noout", "-enddate", "-issuer", "-subject", "-ext", "subjectAltName"],
             input=out1,
             capture_output=True,
             text=True,
@@ -675,9 +891,9 @@ def ssl_info(host: str) -> SslInfo:
                             if val and val not in san_list:
                                 san_list.append(val)
 
-        expires_in_days = parse_openssl_notafter_to_days_left(notafter) if notafter else None
+        expires_in_days = parse_notafter_days_left(notafter) if notafter else None
 
-        covers: Optional[bool] = None
+        covers = None
         if san_list:
             covers = False
             for san in san_list:
@@ -708,9 +924,9 @@ def ssl_info(host: str) -> SslInfo:
 
 
 # =========================================================
-# Health check
+# Curl probes
 # =========================================================
-def run_curl(url: str) -> CurlMetrics:
+def probe_single(url: str, follow_redirects: bool) -> FinalProbe:
     write_out = (
         r'{"http_code":"%{http_code}",'
         r'"time_namelookup":"%{time_namelookup}",'
@@ -722,24 +938,19 @@ def run_curl(url: str) -> CurlMetrics:
         r'"redirect_url":"%{redirect_url}"}'
     )
 
-    cmd = [
-        "curl",
-        "-sS",
-        "-L",
-        "-o",
-        "/dev/null",
-        "--max-time",
-        str(HC_TIMEOUT_SEC),
-        "--connect-timeout",
-        str(HC_TIMEOUT_SEC),
-        "-w",
-        write_out,
+    cmd = ["curl", "-sS"]
+    if follow_redirects:
+        cmd.append("-L")
+    cmd += [
+        "-o", "/dev/null",
+        "--max-time", str(HC_TIMEOUT_SEC),
+        "--connect-timeout", str(HC_CONNECT_TIMEOUT_SEC),
+        "-w", write_out,
         url,
     ]
 
-    start_ts = time.time()
-
     raw = None
+    err = None
     http_code = None
     total_ms = None
     dns_ms = None
@@ -747,14 +958,10 @@ def run_curl(url: str) -> CurlMetrics:
     tls_ms = None
     ttfb_ms = None
     remote_ip = None
-    redirect_url = None
-    err = None
     ok = False
 
     try:
         proc = subprocess.run(cmd, capture_output=True, text=True)
-        elapsed = time.time() - start_ts
-
         stdout = (proc.stdout or "").strip()
         stderr = (proc.stderr or "").strip()
 
@@ -768,36 +975,29 @@ def run_curl(url: str) -> CurlMetrics:
             ttfb_ms = safe_int_ms(str(raw.get("time_starttransfer", "")))
             total_ms = safe_int_ms(str(raw.get("time_total", "")))
             remote_ip = str(raw.get("remote_ip", "")).strip() or None
-            redirect_url = str(raw.get("redirect_url", "")).strip() or None
         except Exception:
-            err = f"Failed to parse curl write-out: {stdout[:250]}"
+            err = f"failed_to_parse_curl_output={stdout[:200]}"
 
-        ok = proc.returncode == 0 and http_code is not None and 200 <= http_code < 400
-
-        if proc.returncode != 0 or not ok:
-            base = f"curl_rc={proc.returncode}, stderr={stderr or 'none'}"
-            err = f"{err} | {base}" if err else base
-
-        if total_ms is None:
-            total_ms = int(elapsed * 1000)
-
+        ok = proc.returncode == 0 and http_code is not None
+        if proc.returncode != 0:
+            msg = f"curl_rc={proc.returncode}, stderr={stderr or 'none'}"
+            err = f"{err} | {msg}" if err else msg
     except Exception as exc:
-        err = f"exception={repr(exc)}"
+        err = repr(exc)
         ok = False
 
-    parsed = urllib.parse.urlparse(url)
-    host = parsed.netloc.split("@")[-1].split(":")[0] if parsed.netloc else ""
-
     headers = fetch_selected_headers(url)
-    redirect_chain, redirect_err = fetch_redirect_chain(url)
-    if redirect_err:
-        err = f"{err} | redirect_chain_err={redirect_err}" if err else f"redirect_chain_err={redirect_err}"
+    chain = [url]
+    chain_err = None
+    if follow_redirects:
+        raw_header_text, chain_err = fetch_header_chain(url)
+        if raw_header_text:
+            chain = extract_redirect_chain(url, raw_header_text)
+        if chain_err:
+            err = f"{err} | redirect_chain_err={chain_err}" if err else f"redirect_chain_err={chain_err}"
 
-    ssl_obj = ssl_info(host) if parsed.scheme == "https" and host else None
-
-    return CurlMetrics(
-        url=url,
-        http_code=http_code,
+    return FinalProbe(
+        status_code=http_code,
         ok=ok,
         total_ms=total_ms,
         dns_ms=dns_ms,
@@ -805,37 +1005,177 @@ def run_curl(url: str) -> CurlMetrics:
         tls_ms=tls_ms,
         ttfb_ms=ttfb_ms,
         remote_ip=remote_ip,
-        redirect_url=redirect_url,
-        redirect_chain=redirect_chain,
         err=err,
-        raw=raw,
         headers=headers,
+        redirect_chain=chain,
+    )
+
+
+def probe_redirect_first_hop(url: str) -> RedirectProbe:
+    cmd = [
+        "curl",
+        "-sS",
+        "-I",
+        "-o", "/dev/null",
+        "-D", "-",
+        "--max-time", str(HC_TIMEOUT_SEC),
+        "--connect-timeout", str(HC_CONNECT_TIMEOUT_SEC),
+        url,
+    ]
+    try:
+        rc, out, err = run_cmd(cmd, HC_TIMEOUT_SEC + 3.0)
+        if rc != 0:
+            return RedirectProbe(None, None, False, err.strip() or f"curl rc={rc}")
+
+        text = out.replace("\r\n", "\n").strip()
+        if not text:
+            return RedirectProbe(None, None, False, "empty_header_response")
+
+        lines = [ln.strip() for ln in text.split("\n") if ln.strip()]
+        if not lines:
+            return RedirectProbe(None, None, False, "empty_header_lines")
+
+        status_code = None
+        m = re.match(r"HTTP/\S+\s+(\d{3})", lines[0])
+        if m:
+            status_code = int(m.group(1))
+
+        location = None
+        for line in lines[1:]:
+            if line.lower().startswith("location:"):
+                location = line.split(":", 1)[1].strip()
+                break
+
+        return RedirectProbe(status_code, location, status_code is not None, None)
+    except Exception as exc:
+        return RedirectProbe(None, None, False, repr(exc))
+
+
+# =========================================================
+# Endpoint checks
+# =========================================================
+def endpoint_expected_text(endpoint: Dict[str, Any]) -> str:
+    t = endpoint["type"]
+    if t == "redirect":
+        statuses = endpoint.get("expect_status", [301, 302, 307, 308])
+        prefix = endpoint.get("expect_location_prefix", "")
+        return f"{'/'.join(str(x) for x in statuses)} -> {prefix}"
+    statuses = endpoint.get("expect_status", [200])
+    return "/".join(str(x) for x in statuses)
+
+
+def short_url(url: str) -> str:
+    try:
+        p = urllib.parse.urlparse(url)
+        return f"{p.scheme}://{p.netloc}{p.path or '/'}"
+    except Exception:
+        return url
+
+
+def redirect_chain_text(chain: Optional[List[str]]) -> str:
+    if not chain or len(chain) <= 1:
+        return "-"
+    return " -> ".join(short_url(x) for x in chain)
+
+
+def check_endpoint(endpoint: Dict[str, Any], state: Dict[str, Any]) -> EndpointResult:
+    checked_at = now_local_str()
+    display_name = endpoint.get("display_name") or endpoint.get("name") or endpoint["url"]
+    endpoint_type = endpoint["type"]
+    url = endpoint["url"]
+
+    dns_host = endpoint.get("dns_host")
+    ssl_host = endpoint.get("ssl_host")
+
+    dns_a: List[str] = []
+    dns_aaaa: List[str] = []
+    if dns_host:
+        dns_info = dns_lookup(dns_host)
+        dns_a = dns_info["A"]
+        dns_aaaa = dns_info["AAAA"]
+
+    ssl_obj = ssl_info(ssl_host) if ssl_host and url.startswith("https://") else None
+
+    expected = endpoint_expected_text(endpoint)
+    redirect_probe = None
+    final_probe = None
+    ok = False
+    status_class = "HTTP"
+    summary = ""
+    actual = ""
+
+    if endpoint_type == "redirect":
+        redirect_probe = probe_redirect_first_hop(url)
+        final_probe = probe_single(url, follow_redirects=True)
+
+        expect_status = set(int(x) for x in endpoint.get("expect_status", [301, 302, 307, 308]))
+        expect_prefix = endpoint.get("expect_location_prefix", "")
+
+        first_ok = (
+            redirect_probe.status_code in expect_status and
+            bool(redirect_probe.location) and
+            str(redirect_probe.location).startswith(expect_prefix)
+        )
+        final_ok = final_probe.status_code is not None and 200 <= final_probe.status_code < 400 and (final_probe.err is None)
+
+        ok = first_ok and final_ok
+        actual = (
+            f"{redirect_probe.status_code or 'NO_STATUS'} -> {redirect_probe.location or '-'}"
+            f" | final={final_probe.status_code or 'NO_STATUS'}"
+        )
+        status_class = classify_error(
+            redirect_probe.err or final_probe.err,
+            redirect_probe.status_code or final_probe.status_code,
+            endpoint_type,
+        )
+        summary = "redirect_ok" if ok else "redirect_mismatch"
+
+    else:
+        final_probe = probe_single(url, follow_redirects=True)
+        expected_status = set(int(x) for x in endpoint.get("expect_status", [200]))
+        ok = final_probe.status_code in expected_status and final_probe.err is None
+        actual = str(final_probe.status_code or "NO_STATUS")
+        status_class = classify_error(final_probe.err, final_probe.status_code, endpoint_type)
+        summary = "service_ok" if ok else "service_down"
+
+    prev = state.get(endpoint["name"], {}) if isinstance(state.get(endpoint["name"]), dict) else {}
+    consecutive_failures = int(prev.get("consecutive_failures", 0) or 0)
+    first_failed_at = prev.get("first_failed_at")
+    last_ok_at = prev.get("last_ok_at")
+
+    return EndpointResult(
+        name=endpoint["name"],
+        display_name=display_name,
+        type=endpoint_type,
+        url=url,
+        ok=ok,
+        status_class=status_class,
+        summary=summary,
+        expected=expected,
+        actual=actual,
+        dns_host=dns_host,
+        dns_a=dns_a,
+        dns_aaaa=dns_aaaa,
+        redirect_probe=redirect_probe,
+        final_probe=final_probe,
         ssl=ssl_obj,
+        consecutive_failures=consecutive_failures,
+        first_failed_at=first_failed_at,
+        last_ok_at=last_ok_at,
+        checked_at=checked_at,
     )
 
 
 # =========================================================
-# Notify decision
+# Notification rules
 # =========================================================
-def should_notify(results: List[CurlMetrics], state: Dict[str, Any]) -> Tuple[bool, str]:
+def should_notify(results: List[EndpointResult], state: Dict[str, Any]) -> Tuple[bool, str]:
     if REPORT_MODE == "always":
         return True, "always"
 
     g = get_global_state(state)
     has_issue_now = any(not r.ok for r in results)
     prev_has_issue = bool(g.get("has_issue", False))
-
-    for r in results:
-        state[r.url] = {
-            "ok": r.ok,
-            "http_code": r.http_code,
-            "total_ms": r.total_ms,
-            "ts": now_local_str(),
-        }
-
-    add_check_history(state, results, has_issue_now)
-    g["has_issue"] = has_issue_now
-    g["last_check"] = now_local_str()
 
     if REPORT_MODE == "on_error":
         if has_issue_now and not prev_has_issue:
@@ -846,16 +1186,17 @@ def should_notify(results: List[CurlMetrics], state: Dict[str, Any]) -> Tuple[bo
             return True, "issue_resolved"
         return False, "all_ok"
 
-    # on_change
-    changes: List[str] = []
+    changed = []
     for r in results:
-        prev_ok = state.get(r.url, {}).get("ok", None)
+        prev = state.get(r.name, {})
+        prev_ok = prev.get("ok")
+        prev_actual = prev.get("actual")
         if prev_ok is None:
-            changes.append(f"INIT {r.url} => {'UP' if r.ok else 'DOWN'}")
-        elif bool(prev_ok) != bool(r.ok):
-            changes.append(f"CHANGE {r.url}: {'UP' if prev_ok else 'DOWN'} -> {'UP' if r.ok else 'DOWN'}")
+            changed.append(f"INIT {r.name}")
+        elif bool(prev_ok) != bool(r.ok) or str(prev_actual) != str(r.actual):
+            changed.append(f"CHANGE {r.name}")
 
-    return len(changes) > 0, "; ".join(changes) if changes else "no_change"
+    return (len(changed) > 0), ("; ".join(changed) if changed else "no_change")
 
 
 # =========================================================
@@ -898,18 +1239,67 @@ def slack_post(payload_obj: Dict[str, Any]) -> None:
         _ = resp.read()
 
 
-def short_url(url: str) -> str:
-    try:
-        p = urllib.parse.urlparse(url)
-        return f"{p.scheme}://{p.netloc}{p.path or '/'}"
-    except Exception:
-        return url
+_SLACK_CHUNK_MARKER_MAX = 40
 
 
-def chain_to_str(chain: Optional[List[str]]) -> str:
-    if not chain or len(chain) <= 1:
-        return "-"
-    return " -> ".join(short_url(x) for x in chain)
+def _chunk_text_for_slack(s: str, first_limit: int, rest_limit: int) -> List[str]:
+    if not s:
+        return []
+    parts: List[str] = []
+    i = 0
+    n = len(s)
+    while i < n:
+        lim = first_limit if not parts else rest_limit
+        remain = n - i
+        if remain <= lim:
+            parts.append(s[i:])
+            break
+        end = i + lim
+        window = s[i:end]
+        nl = window.rfind("\n")
+        if nl > lim // 4:
+            end = i + nl + 1
+        parts.append(s[i:end])
+        i = end
+    return parts
+
+
+def _split_slack_messages(full_text: str) -> List[str]:
+    max_len = max(500, SLACK_MAX_CHARS)
+    rest_lim = max(100, max_len - _SLACK_CHUNK_MARKER_MAX)
+    if len(full_text) <= max_len:
+        return [full_text]
+    raw_parts = _chunk_text_for_slack(full_text, max_len, rest_lim)
+    if len(raw_parts) <= 1:
+        return raw_parts
+    out = [raw_parts[0]]
+    total = len(raw_parts)
+    for i in range(1, total):
+        out.append(f"*[… {i + 1}/{total}]*\n" + raw_parts[i])
+    return out
+
+
+def slack_post_text_batched(full_text: str, *, attach_image: bool = False) -> None:
+    chunks = _split_slack_messages(full_text)
+    for idx, ch in enumerate(chunks):
+        payload: Dict[str, Any] = {
+            "text": ch,
+            "username": SLACK_USERNAME,
+            "icon_emoji": get_rotating_emoji(),
+        }
+        if (
+            attach_image
+            and idx == 0
+            and SLACK_IMAGE_URL
+            and SLACK_POST_MODE == "json"
+        ):
+            payload["attachments"] = [
+                {
+                    "image_url": SLACK_IMAGE_URL,
+                    "fallback": "YK Watchdog Status Check",
+                }
+            ]
+        slack_post(payload)
 
 
 def headers_pretty(h: Dict[str, str]) -> str:
@@ -918,14 +1308,14 @@ def headers_pretty(h: Dict[str, str]) -> str:
     if "_error" in h:
         return f"(error) {h.get('_error')}"
     parts = []
+    mapping = {
+        "content-type": "type",
+        "cache-control": "cache",
+        "strict-transport-security": "hsts",
+    }
     for k in HEADER_KEYS:
         if k in h:
-            display_key = {
-                "content-type": "type",
-                "cache-control": "cache",
-                "strict-transport-security": "hsts",
-            }.get(k, k)
-            parts.append(f"{display_key}={h[k]}")
+            parts.append(f"{mapping.get(k, k)}={h[k]}")
     if not parts:
         for i, (k, v) in enumerate(h.items()):
             if i >= 6:
@@ -934,63 +1324,110 @@ def headers_pretty(h: Dict[str, str]) -> str:
     return " | ".join(parts)
 
 
-def build_slack_text(results: List[CurlMetrics], run_id: str, host: str) -> Tuple[str, bool]:
-    header = (
-        f"🔍 *Health Check Report*\n"
-        f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-        f"🆔 `{run_id}` | 🖥️ `{host}` | 🕐 `{now_local_str()}`\n"
-        f"⏱️ Timeout: `{HC_TIMEOUT_SEC}s` | 🐌 Slow: `>={HC_SLOW_MS}ms` | 📊 Mode: `{REPORT_MODE}`"
-    )
+def build_slack_prefix(results: List[EndpointResult], cert_warn_hit: bool) -> str:
+    lines = [
+        "🐕 *YK Watchdog*",
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+    ]
+    if ENABLE_MENTIONS and ALWAYS_MENTION:
+        lines.append(f"mentions: {' '.join(ALWAYS_MENTION)}")
 
-    lines: List[str] = [header, ""]
+    if ENABLE_MENTIONS and CHANNEL_MENTION_ON_FAIL:
+        if any(not r.ok for r in results) or cert_warn_hit:
+            lines.append("📢 <!channel>")
+
+    return "\n".join(lines) + "\n\n"
+
+
+def build_resolved_text(results: List[EndpointResult], run_id: str, host: str) -> str:
+    lines = [
+        "✅ *All Services Recovered*",
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        f"🆔 `{run_id}` | 🖥️ `{host}` | 🕐 `{now_local_str()}`",
+        "",
+    ]
+    for r in results:
+        lines.append(f"🟢 `{r.display_name}` [{r.type}] - actual=`{r.actual}`")
+    return "\n".join(lines)
+
+
+def build_slack_text(results: List[EndpointResult], run_id: str, host: str) -> Tuple[str, bool]:
+    lines = [
+        "🔍 *Health Check Report*",
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        f"🆔 `{run_id}` | 🖥️ `{host}` | 🕐 `{now_local_str()}`",
+        f"⏱️ Timeout: `{HC_TIMEOUT_SEC}s` | 🐌 Slow: `>={HC_SLOW_MS}ms` | 📊 Mode: `{REPORT_MODE}`",
+        "",
+    ]
+
     cert_warn_hit = False
 
     for r in results:
-        parsed = urllib.parse.urlparse(r.url)
-        domain = parsed.netloc or r.url
-        status_txt = str(r.http_code) if r.http_code is not None else "NO_STATUS"
-        is_slow = r.ok and r.total_ms is not None and r.total_ms >= HC_SLOW_MS
+        icon = "✅" if r.ok else "❌"
+        lines.append(f"{icon} *{r.display_name}* `[{r.type}]`")
+        lines.append(f"   🎯 Expected: `{r.expected}`")
+        lines.append(f"   📊 Actual: `{r.actual}`")
+        lines.append(f"   🧭 Class: `{r.status_class}` | 📝 Summary: `{r.summary}`")
 
-        domain_header = f"{'✅' if r.ok else '❌'} *{domain}*"
-        if is_slow:
-            domain_header += " 🐢 *SLOW*"
+        if r.consecutive_failures:
+            lines.append(f"   🔁 Consecutive failures: `{r.consecutive_failures}`")
+        if r.first_failed_at:
+            lines.append(f"   ⛔ First failed at: `{r.first_failed_at}`")
+        if r.last_ok_at:
+            lines.append(f"   ✅ Last ok at: `{r.last_ok_at}`")
 
-        lines.append(domain_header)
-        lines.append(
-            f"   📊 Status: `{status_txt}` | ⏱️ Total: `{r.total_ms}ms` | 🌐 IP: `{r.remote_ip or '-'}`"
-        )
+        if r.redirect_probe:
+            lines.append(
+                f"   🔀 Redirect first hop: status=`{r.redirect_probe.status_code or '-'}` | location=`{r.redirect_probe.location or '-'}`"
+            )
 
-        redirect_str = chain_to_str(r.redirect_chain)
-        if redirect_str != "-":
-            lines.append(f"   🔀 Redirects: `{redirect_str}`")
+        if r.final_probe:
+            fp = r.final_probe
+            lines.append(
+                f"   🌐 Final: status=`{fp.status_code or '-'}` | IP=`{fp.remote_ip or '-'}` | total=`{fp.total_ms if fp.total_ms is not None else '-'}ms`"
+            )
 
-        dns = dns_lookup(domain)
-        dns_a = ",".join(dns["A"]) if dns["A"] else "-"
-        dns_aaaa = ",".join(dns["AAAA"]) if dns["AAAA"] else "-"
-        lines.append(f"   🌍 DNS: A=`{dns_a}` AAAA=`{dns_aaaa}`")
+            timing_parts = []
+            if fp.dns_ms is not None:
+                timing_parts.append(f"DNS={fp.dns_ms}ms")
+            if fp.connect_ms is not None:
+                timing_parts.append(f"Conn={fp.connect_ms}ms")
+            if fp.tls_ms is not None:
+                timing_parts.append(f"TLS={fp.tls_ms}ms")
+            if fp.ttfb_ms is not None:
+                timing_parts.append(f"TTFB={fp.ttfb_ms}ms")
+            if fp.total_ms is not None:
+                timing_parts.append(f"Total={fp.total_ms}ms")
+            if timing_parts:
+                lines.append(f"   ⚡ Timing: `{' | '.join(timing_parts)}`")
 
-        timing_parts = []
-        if r.dns_ms is not None:
-            timing_parts.append(f"DNS={r.dns_ms}ms")
-        if r.connect_ms is not None:
-            timing_parts.append(f"Conn={r.connect_ms}ms")
-        if r.tls_ms is not None:
-            timing_parts.append(f"TLS={r.tls_ms}ms")
-        if r.ttfb_ms is not None:
-            timing_parts.append(f"TTFB={r.ttfb_ms}ms")
-        if r.total_ms is not None:
-            timing_parts.append(f"Total={r.total_ms}ms")
-        if timing_parts:
-            lines.append(f"   ⚡ Timing: `{' | '.join(timing_parts)}`")
+            chain_str = redirect_chain_text(fp.redirect_chain)
+            if chain_str != "-":
+                lines.append(f"   🔁 Redirect chain: `{chain_str}`")
 
-        if parsed.scheme == "https" and r.ssl:
+            header_text = headers_pretty(fp.headers or {})
+            if header_text and header_text != "-":
+                if len(header_text) > 200:
+                    header_text = header_text[:200] + "..."
+                lines.append(f"   📨 Headers: `{header_text}`")
+
+            if fp.err:
+                short_err = fp.err[:220] + ("..." if len(fp.err) > 220 else "")
+                lines.append(f"   ⚠️ Error: `{short_err}`")
+
+        if r.dns_host:
+            lines.append(
+                f"   🌍 DNS({r.dns_host}): A=`{','.join(r.dns_a) if r.dns_a else '-'}` AAAA=`{','.join(r.dns_aaaa) if r.dns_aaaa else '-'}`"
+            )
+
+        if r.ssl:
             ssl_parts = []
             if r.ssl.notafter:
                 ssl_parts.append(f"Expires: `{r.ssl.notafter}`")
             if r.ssl.expires_in_days is not None:
                 days_left = r.ssl.expires_in_days
                 if days_left < 0:
-                    ssl_parts.append(f"⚠️ *EXPIRED* ({abs(days_left)}d ago)")
+                    ssl_parts.append(f"🚨 *expired* ({abs(days_left)}d ago)")
                     cert_warn_hit = True
                 elif days_left <= CERT_ALERT_DAYS:
                     ssl_parts.append(f"🚨 *{days_left}d left*")
@@ -1008,104 +1445,18 @@ def build_slack_text(results: List[CurlMetrics], run_id: str, host: str) -> Tupl
                 lines.append(f"   🏢 Issuer: `{r.ssl.issuer}`")
             if r.ssl.san:
                 if r.ssl.san_covers_host is True:
-                    cover_text = " (✅ covers host)"
+                    coverage = " (✅ covers host)"
                 elif r.ssl.san_covers_host is False:
-                    cover_text = " (❌ does not cover host)"
+                    coverage = " (❌ does not cover host)"
                 else:
-                    cover_text = ""
-                lines.append(f"   📋 SAN{cover_text}: `{', '.join(r.ssl.san)}`")
-
-        header_text = headers_pretty(r.headers or {})
-        if header_text and header_text != "-":
-            if len(header_text) > 200:
-                header_text = header_text[:200] + "..."
-            lines.append(f"   📨 Headers: `{header_text}`")
-
-        if r.err:
-            short_err = r.err[:200] + ("..." if len(r.err) > 200 else "")
-            lines.append(f"   ⚠️ Error: `{short_err}`")
+                    coverage = ""
+                lines.append(f"   📋 SAN{coverage}: `{', '.join(r.ssl.san)}`")
 
         lines.append("")
 
     lines.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
     text = "\n".join(lines).strip()
-
-    if len(text) > SLACK_MAX_CHARS:
-        text = text[: SLACK_MAX_CHARS - 250] + "\n\n⚠️ *메시지가 잘렸습니다*"
-
     return text, cert_warn_hit
-
-
-def build_resolved_text(results: List[CurlMetrics], run_id: str, host: str) -> str:
-    lines = [
-        "✅ *All Services Recovered*",
-        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-        f"🆔 `{run_id}` | 🖥️ `{host}` | 🕐 `{now_local_str()}`",
-        "",
-        "🎉 *All monitored services are now operating normally.*",
-        "",
-    ]
-
-    for r in results:
-        parsed = urllib.parse.urlparse(r.url)
-        domain = parsed.netloc or r.url
-        status_txt = str(r.http_code) if r.http_code is not None else "OK"
-        total_txt = f"{r.total_ms}ms" if r.total_ms is not None else "-"
-        lines.append(f"🟢 `{domain}` - Status: `{status_txt}` | Time: `{total_txt}`")
-
-    return "\n".join(lines)
-
-
-def build_slack_prefix(results: List[CurlMetrics], cert_warn_hit: bool) -> str:
-    lines = [
-        "🐕 *YK Watchdog*",
-        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-    ]
-
-    if ENABLE_MENTIONS and ALWAYS_MENTION:
-        lines.append(f"mentions: {' '.join(ALWAYS_MENTION)}")
-
-    if ENABLE_MENTIONS and CHANNEL_MENTION_ON_FAIL:
-        if any(not r.ok for r in results) or cert_warn_hit:
-            lines.append("📢 <!channel>")
-
-    return "\n".join(lines) + "\n\n"
-
-
-# =========================================================
-# Restart detection
-# =========================================================
-def detect_restart(state: Dict[str, Any], run_id: str, current_time: str) -> Tuple[bool, Optional[str]]:
-    g = get_global_state(state)
-    last_check_time = g.get("last_check")
-    last_run_id = g.get("last_run_id")
-    force_restart = bool(g.get("force_restart_report", False))
-
-    if force_restart:
-        g["force_restart_report"] = False
-        return True, last_check_time
-
-    if not last_check_time:
-        return True, None
-
-    try:
-        last_dt = datetime.strptime(last_check_time, "%Y-%m-%d %H:%M:%S")
-        current_dt = datetime.strptime(current_time, "%Y-%m-%d %H:%M:%S")
-        if (current_dt - last_dt).total_seconds() > 300:
-            return True, last_check_time
-    except Exception:
-        return True, last_check_time
-
-    if last_run_id:
-        try:
-            prev_dt = datetime.strptime(last_run_id[:8] + last_run_id[9:], "%Y%m%d%H%M%S")
-            cur_dt = datetime.strptime(run_id[:8] + run_id[9:], "%Y%m%d%H%M%S")
-            if (cur_dt - prev_dt).total_seconds() > 300:
-                return True, last_check_time
-        except Exception:
-            pass
-
-    return False, last_check_time
 
 
 # =========================================================
@@ -1125,21 +1476,30 @@ def main() -> None:
     is_restart, last_check_time = detect_restart(state, run_id, current_time)
 
     if should_send_daily_report(state):
-        daily_report = build_daily_report(state)
-        if daily_report:
-            payload = {
-                "text": build_slack_prefix([], False) + daily_report,
-                "username": SLACK_USERNAME,
-                "icon_emoji": get_rotating_emoji(),
-            }
+        report = build_daily_report(state)
+        if report:
             try:
-                slack_post(payload)
+                slack_post_text_batched(
+                    build_slack_prefix([], False) + report,
+                    attach_image=False,
+                )
                 get_global_state(state)["last_daily_report_date"] = today_ymd()
                 append_log(f"[{now_local_str()}] run_id={run_id} daily_report=sent")
             except Exception as exc:
                 append_log(f"[{now_local_str()}] run_id={run_id} daily_report=failed err={repr(exc)}")
 
-    results = [run_curl(url) for url in TARGETS]
+    results = [check_endpoint(ep, state) for ep in ENDPOINTS]
+
+    for r in results:
+        update_endpoint_state(state, r)
+
+    has_issue_now = any(not r.ok for r in results)
+    g = get_global_state(state)
+    g["has_issue"] = has_issue_now
+    g["last_check"] = now_local_str()
+    g["last_run_id"] = run_id
+
+    add_history(state, results, has_issue_now)
 
     append_log(
         json.dumps(
@@ -1151,12 +1511,10 @@ def main() -> None:
                     "timeout_sec": HC_TIMEOUT_SEC,
                     "slow_ms": HC_SLOW_MS,
                     "report_mode": REPORT_MODE,
-                    "targets": TARGETS,
+                    "endpoints": ENDPOINTS,
                     "header_keys": HEADER_KEYS,
                     "cert_warn_days": CERT_WARN_DAYS,
                     "cert_alert_days": CERT_ALERT_DAYS,
-                    "cert_max_san_items": CERT_MAX_SAN_ITEMS,
-                    "max_redirects": MAX_REDIRECTS,
                 },
                 "results": [asdict(r) for r in results],
             },
@@ -1170,9 +1528,6 @@ def main() -> None:
         reason = "restart_detected"
 
     append_log(f"[{now_local_str()}] run_id={run_id} notify={notify} reason={reason}")
-
-    g = get_global_state(state)
-    g["last_run_id"] = run_id
     save_state(state)
 
     if not notify:
@@ -1188,41 +1543,28 @@ def main() -> None:
     if is_restart and last_check_time:
         restart_report = build_restart_report(state, last_check_time, current_time)
         if restart_report:
-            payload_restart = {
-                "text": build_slack_prefix([], False) + restart_report,
-                "username": SLACK_USERNAME,
-                "icon_emoji": get_rotating_emoji(),
-            }
             try:
-                slack_post(payload_restart)
+                slack_post_text_batched(
+                    build_slack_prefix([], False) + restart_report,
+                    attach_image=False,
+                )
                 append_log(f"[{now_local_str()}] run_id={run_id} restart_report=sent")
             except Exception as exc:
                 append_log(f"[{now_local_str()}] run_id={run_id} restart_report=failed err={repr(exc)}")
 
-        text = (
+        restart_header = (
             "🔄 *재기동 감지 - 현재 상태*\n"
-            f"⏸️  마지막 실행: `{last_check_time}`\n"
-            f"▶️  재기동 시간: `{current_time}`\n"
+            f"⏸️ 마지막 실행: `{last_check_time}`\n"
+            f"▶️ 재기동 시간: `{current_time}`\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
-            + text
         )
-
-    payload = {
-        "text": build_slack_prefix(results, cert_warn_hit) + text,
-        "username": SLACK_USERNAME,
-        "icon_emoji": get_rotating_emoji(),
-    }
-
-    if SLACK_IMAGE_URL and SLACK_POST_MODE == "json":
-        payload["attachments"] = [
-            {
-                "image_url": SLACK_IMAGE_URL,
-                "fallback": "YK Watchdog Status Check",
-            }
-        ]
+        text = restart_header + text
 
     try:
-        slack_post(payload)
+        slack_post_text_batched(
+            build_slack_prefix(results, cert_warn_hit) + text,
+            attach_image=bool(SLACK_IMAGE_URL and SLACK_POST_MODE == "json"),
+        )
         append_log(f"[{now_local_str()}] run_id={run_id} slack=sent")
     except Exception as exc:
         append_log(f"[{now_local_str()}] run_id={run_id} slack=failed err={repr(exc)}")
