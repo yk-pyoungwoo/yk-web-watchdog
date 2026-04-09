@@ -89,7 +89,7 @@ http {
 	# 구현:
 	#   nginx map 은 한 번에 하나의 패턴만 안전하게 제거하기 어려워, 동일 규칙을
 	#   qs_u01 … qs_u10 까지 10번 반복 적용 (utm_* 파라미터 최대 10개 제거 가정).
-	#   이후 gclid → gcl_keyword, gcl_network, gad_source, gad_campaignid → fbclid, msclkid, dclid, yclid → NaPm(네이버 BSA 등) 제거.
+	#   이후 gclid → gcl_keyword, gcl_network, gad_source, gad_campaignid → fbclid, msclkid, dclid, yclid → NaPm(네이버 BSA 등) → _rsc(Next RSC 캐시 버스터) 제거.
 	#   앞뒤 & 정리, 연속 && 를 & 로 치환 (trim1~trim3).
 	# 최종:
 	#   $cache_query_string = "" 이면 쿼리 없음 → 키에 ? 붙이지 않음.
@@ -250,9 +250,19 @@ http {
 		~^(.*)&napm=[^&]*&(.*)$ $1&$2;
 		~^(.*)&napm=[^&]*$ $1;
 	}
-	# 제거 후 선행/후행 & 제거
-	map $qs_napm $qs_trim1 {
+	# Next.js RSC 요청 파라미터(_rsc=랜덤토큰) 제거
+	# - _rsc 는 요청마다 값이 달라 cache key 분산을 유발하므로 캐시 키에서만 제외
+	# - proxy_pass 로 전달되는 실제 요청 URI/쿼리는 변경되지 않음
+	map $qs_napm $qs_rsc {
 		default $qs_napm;
+		~^_rsc=[^&]*&(.*)$ $1;
+		~^_rsc=[^&]*$ "";
+		~^(.*)&_rsc=[^&]*&(.*)$ $1&$2;
+		~^(.*)&_rsc=[^&]*$ $1;
+	}
+	# 제거 후 선행/후행 & 제거
+	map $qs_rsc $qs_trim1 {
+		default $qs_rsc;
 		~^&+(.*)$ $1;
 		~^(.*)&+$ $1;
 	}

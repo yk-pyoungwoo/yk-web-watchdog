@@ -26,2598 +26,6 @@
   "_global": {
     "_check_history": [
       {
-        "ts": "2026-04-08 16:27:11",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 16:30:17",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 16:33:17",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 16:36:14",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 16:39:17",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 16:42:16",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 16:45:12",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 16:48:13",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 16:51:10",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 16:54:11",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 16:57:11",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 17:00:10",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 17:03:10",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 17:06:18",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 17:09:19",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 17:12:12",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 17:15:10",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 17:18:13",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 17:21:12",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 17:24:15",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 17:27:18",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 17:30:17",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 17:33:11",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 17:36:16",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 17:39:22",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 17:42:17",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 17:45:13",
-        "has_issue": false,
-        "results": {
-          "brand-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "brand-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "crime-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "crime-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "divorce-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "divorce-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "civil-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "civil-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "assault-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "assault-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "inherit-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "inherit-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "drug-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "drug-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "traffic-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "traffic-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          },
-          "school-apex": {
-            "ok": true,
-            "type": "redirect",
-            "summary": "redirect_ok"
-          },
-          "school-www": {
-            "ok": true,
-            "type": "service",
-            "summary": "service_ok"
-          }
-        }
-      },
-      {
         "ts": "2026-04-08 17:48:13",
         "has_issue": false,
         "results": {
@@ -46104,13 +43512,2605 @@
             "summary": "service_ok"
           }
         }
+      },
+      {
+        "ts": "2026-04-09 16:24:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 16:27:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 16:30:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 16:33:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 16:36:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 16:39:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 16:42:09",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 16:45:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 16:48:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 16:51:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 16:54:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 16:57:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 17:00:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 17:03:12",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 17:06:14",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 17:09:09",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 17:12:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 17:15:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 17:18:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 17:21:07",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 17:24:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 17:27:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 17:30:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 17:33:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 17:36:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 17:39:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 17:42:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
       }
     ],
     "has_issue": false,
-    "last_check": "2026-04-09 16:21:07",
+    "last_check": "2026-04-09 17:42:08",
     "force_restart_report": false,
     "last_daily_report_date": "2026-04-09",
-    "last_run_id": "20260409-162100"
+    "last_run_id": "20260409-174200"
   },
   "https://yklawfirm-inherit.co.kr/": {
     "ok": true,
@@ -46149,9 +46149,9 @@
     "type": "redirect",
     "status_class": "REDIRECT",
     "summary": "redirect_ok",
-    "checked_at": "2026-04-09 16:21:00",
+    "checked_at": "2026-04-09 17:42:00",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 16:21:00",
+    "last_ok_at": "2026-04-09 17:42:00",
     "consecutive_failures": 0,
     "actual": "301 -> https://www.yklawfirm.co.kr/ | final=200",
     "expected": "301/302/307/308 -> https://www.yklawfirm.co.kr/"
@@ -46163,9 +46163,9 @@
     "type": "service",
     "status_class": "HTTP",
     "summary": "service_ok",
-    "checked_at": "2026-04-09 16:21:00",
+    "checked_at": "2026-04-09 17:42:00",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 16:21:00",
+    "last_ok_at": "2026-04-09 17:42:00",
     "consecutive_failures": 0,
     "actual": "200",
     "expected": "200"
@@ -46177,9 +46177,9 @@
     "type": "redirect",
     "status_class": "REDIRECT",
     "summary": "redirect_ok",
-    "checked_at": "2026-04-09 16:21:01",
+    "checked_at": "2026-04-09 17:42:01",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 16:21:01",
+    "last_ok_at": "2026-04-09 17:42:01",
     "consecutive_failures": 0,
     "actual": "301 -> https://www.yklawfirm-crime.co.kr/ | final=200",
     "expected": "301/302/307/308 -> https://www.yklawfirm-crime.co.kr/"
@@ -46191,9 +46191,9 @@
     "type": "service",
     "status_class": "HTTP",
     "summary": "service_ok",
-    "checked_at": "2026-04-09 16:21:01",
+    "checked_at": "2026-04-09 17:42:01",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 16:21:01",
+    "last_ok_at": "2026-04-09 17:42:01",
     "consecutive_failures": 0,
     "actual": "200",
     "expected": "200"
@@ -46205,9 +46205,9 @@
     "type": "redirect",
     "status_class": "REDIRECT",
     "summary": "redirect_ok",
-    "checked_at": "2026-04-09 16:21:01",
+    "checked_at": "2026-04-09 17:42:02",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 16:21:01",
+    "last_ok_at": "2026-04-09 17:42:02",
     "consecutive_failures": 0,
     "actual": "301 -> https://www.yklawfirm-divorce.co.kr/ | final=200",
     "expected": "301/302/307/308 -> https://www.yklawfirm-divorce.co.kr/"
@@ -46219,9 +46219,9 @@
     "type": "service",
     "status_class": "HTTP",
     "summary": "service_ok",
-    "checked_at": "2026-04-09 16:21:02",
+    "checked_at": "2026-04-09 17:42:02",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 16:21:02",
+    "last_ok_at": "2026-04-09 17:42:02",
     "consecutive_failures": 0,
     "actual": "200",
     "expected": "200"
@@ -46233,9 +46233,9 @@
     "type": "redirect",
     "status_class": "REDIRECT",
     "summary": "redirect_ok",
-    "checked_at": "2026-04-09 16:21:02",
+    "checked_at": "2026-04-09 17:42:02",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 16:21:02",
+    "last_ok_at": "2026-04-09 17:42:02",
     "consecutive_failures": 0,
     "actual": "301 -> https://www.yklawfirm-civil.co.kr/ | final=200",
     "expected": "301/302/307/308 -> https://www.yklawfirm-civil.co.kr/"
@@ -46247,9 +46247,9 @@
     "type": "service",
     "status_class": "HTTP",
     "summary": "service_ok",
-    "checked_at": "2026-04-09 16:21:03",
+    "checked_at": "2026-04-09 17:42:03",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 16:21:03",
+    "last_ok_at": "2026-04-09 17:42:03",
     "consecutive_failures": 0,
     "actual": "200",
     "expected": "200"
@@ -46261,9 +46261,9 @@
     "type": "redirect",
     "status_class": "REDIRECT",
     "summary": "redirect_ok",
-    "checked_at": "2026-04-09 16:21:03",
+    "checked_at": "2026-04-09 17:42:03",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 16:21:03",
+    "last_ok_at": "2026-04-09 17:42:03",
     "consecutive_failures": 0,
     "actual": "301 -> https://www.yklawfirm-assault.co.kr/ | final=200",
     "expected": "301/302/307/308 -> https://www.yklawfirm-assault.co.kr/"
@@ -46275,9 +46275,9 @@
     "type": "service",
     "status_class": "HTTP",
     "summary": "service_ok",
-    "checked_at": "2026-04-09 16:21:04",
+    "checked_at": "2026-04-09 17:42:04",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 16:21:04",
+    "last_ok_at": "2026-04-09 17:42:04",
     "consecutive_failures": 0,
     "actual": "200",
     "expected": "200"
@@ -46289,9 +46289,9 @@
     "type": "redirect",
     "status_class": "REDIRECT",
     "summary": "redirect_ok",
-    "checked_at": "2026-04-09 16:21:04",
+    "checked_at": "2026-04-09 17:42:04",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 16:21:04",
+    "last_ok_at": "2026-04-09 17:42:04",
     "consecutive_failures": 0,
     "actual": "301 -> https://www.yklawfirm-inherit.co.kr/ | final=200",
     "expected": "301/302/307/308 -> https://www.yklawfirm-inherit.co.kr/"
@@ -46303,9 +46303,9 @@
     "type": "service",
     "status_class": "HTTP",
     "summary": "service_ok",
-    "checked_at": "2026-04-09 16:21:05",
+    "checked_at": "2026-04-09 17:42:05",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 16:21:05",
+    "last_ok_at": "2026-04-09 17:42:05",
     "consecutive_failures": 0,
     "actual": "200",
     "expected": "200"
@@ -46317,9 +46317,9 @@
     "type": "redirect",
     "status_class": "REDIRECT",
     "summary": "redirect_ok",
-    "checked_at": "2026-04-09 16:21:05",
+    "checked_at": "2026-04-09 17:42:05",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 16:21:05",
+    "last_ok_at": "2026-04-09 17:42:05",
     "consecutive_failures": 0,
     "actual": "301 -> https://www.yklawfirm-drug.co.kr/ | final=200",
     "expected": "301/302/307/308 -> https://www.yklawfirm-drug.co.kr/"
@@ -46331,9 +46331,9 @@
     "type": "service",
     "status_class": "HTTP",
     "summary": "service_ok",
-    "checked_at": "2026-04-09 16:21:05",
+    "checked_at": "2026-04-09 17:42:06",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 16:21:05",
+    "last_ok_at": "2026-04-09 17:42:06",
     "consecutive_failures": 0,
     "actual": "200",
     "expected": "200"
@@ -46345,9 +46345,9 @@
     "type": "redirect",
     "status_class": "REDIRECT",
     "summary": "redirect_ok",
-    "checked_at": "2026-04-09 16:21:06",
+    "checked_at": "2026-04-09 17:42:06",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 16:21:06",
+    "last_ok_at": "2026-04-09 17:42:06",
     "consecutive_failures": 0,
     "actual": "301 -> https://www.yklawfirm-traffic.co.kr/ | final=200",
     "expected": "301/302/307/308 -> https://www.yklawfirm-traffic.co.kr/"
@@ -46359,9 +46359,9 @@
     "type": "service",
     "status_class": "HTTP",
     "summary": "service_ok",
-    "checked_at": "2026-04-09 16:21:06",
+    "checked_at": "2026-04-09 17:42:07",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 16:21:06",
+    "last_ok_at": "2026-04-09 17:42:07",
     "consecutive_failures": 0,
     "actual": "200",
     "expected": "200"
@@ -46373,9 +46373,9 @@
     "type": "redirect",
     "status_class": "REDIRECT",
     "summary": "redirect_ok",
-    "checked_at": "2026-04-09 16:21:07",
+    "checked_at": "2026-04-09 17:42:07",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 16:21:07",
+    "last_ok_at": "2026-04-09 17:42:07",
     "consecutive_failures": 0,
     "actual": "301 -> https://www.yklawfirm-school.co.kr/ | final=200",
     "expected": "301/302/307/308 -> https://www.yklawfirm-school.co.kr/"
@@ -46387,9 +46387,9 @@
     "type": "service",
     "status_class": "HTTP",
     "summary": "service_ok",
-    "checked_at": "2026-04-09 16:21:07",
+    "checked_at": "2026-04-09 17:42:07",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 16:21:07",
+    "last_ok_at": "2026-04-09 17:42:07",
     "consecutive_failures": 0,
     "actual": "200",
     "expected": "200"
