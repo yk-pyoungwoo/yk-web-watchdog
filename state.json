@@ -26,108 +26,6 @@
   "_global": {
     "_check_history": [
       {
-        "ts": "2026-04-08 09:33:13",
-        "has_issue": false,
-        "results": {
-          "https://yklawfirm.co.kr/": {
-            "ok": true,
-            "http_code": 200,
-            "total_ms": 270
-          },
-          "https://yklawfirm-crime.co.kr/": {
-            "ok": true,
-            "http_code": 200,
-            "total_ms": 754
-          },
-          "https://yklawfirm-divorce.co.kr/": {
-            "ok": true,
-            "http_code": 200,
-            "total_ms": 199
-          },
-          "https://yklawfirm-civil.co.kr/": {
-            "ok": true,
-            "http_code": 200,
-            "total_ms": 176
-          },
-          "https://yklawfirm-inherit.co.kr/": {
-            "ok": true,
-            "http_code": 200,
-            "total_ms": 180
-          },
-          "https://yklawfirm-assault.co.kr/": {
-            "ok": true,
-            "http_code": 200,
-            "total_ms": 3031
-          },
-          "https://yklawfirm-drug.co.kr/": {
-            "ok": true,
-            "http_code": 200,
-            "total_ms": 136
-          },
-          "https://yklawfirm-traffic.co.kr/": {
-            "ok": true,
-            "http_code": 200,
-            "total_ms": 152
-          },
-          "https://yklawfirm-school.co.kr/": {
-            "ok": true,
-            "http_code": 200,
-            "total_ms": 160
-          }
-        }
-      },
-      {
-        "ts": "2026-04-08 09:36:11",
-        "has_issue": false,
-        "results": {
-          "https://yklawfirm.co.kr/": {
-            "ok": true,
-            "http_code": 200,
-            "total_ms": 416
-          },
-          "https://yklawfirm-crime.co.kr/": {
-            "ok": true,
-            "http_code": 200,
-            "total_ms": 1578
-          },
-          "https://yklawfirm-divorce.co.kr/": {
-            "ok": true,
-            "http_code": 200,
-            "total_ms": 219
-          },
-          "https://yklawfirm-civil.co.kr/": {
-            "ok": true,
-            "http_code": 200,
-            "total_ms": 917
-          },
-          "https://yklawfirm-inherit.co.kr/": {
-            "ok": true,
-            "http_code": 200,
-            "total_ms": 1087
-          },
-          "https://yklawfirm-assault.co.kr/": {
-            "ok": true,
-            "http_code": 200,
-            "total_ms": 164
-          },
-          "https://yklawfirm-drug.co.kr/": {
-            "ok": true,
-            "http_code": 200,
-            "total_ms": 186
-          },
-          "https://yklawfirm-traffic.co.kr/": {
-            "ok": true,
-            "http_code": 200,
-            "total_ms": 152
-          },
-          "https://yklawfirm-school.co.kr/": {
-            "ok": true,
-            "http_code": 200,
-            "total_ms": 200
-          }
-        }
-      },
-      {
         "ts": "2026-04-08 09:39:17",
         "has_issue": false,
         "results": {
@@ -45834,13 +45732,205 @@
             "summary": "service_ok"
           }
         }
+      },
+      {
+        "ts": "2026-04-09 09:24:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
+      },
+      {
+        "ts": "2026-04-09 09:27:08",
+        "has_issue": false,
+        "results": {
+          "brand-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "brand-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "crime-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "crime-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "divorce-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "divorce-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "civil-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "civil-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "assault-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "assault-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "inherit-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "inherit-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "drug-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "drug-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "traffic-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "traffic-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          },
+          "school-apex": {
+            "ok": true,
+            "type": "redirect",
+            "summary": "redirect_ok"
+          },
+          "school-www": {
+            "ok": true,
+            "type": "service",
+            "summary": "service_ok"
+          }
+        }
       }
     ],
     "has_issue": false,
-    "last_check": "2026-04-09 09:21:07",
+    "last_check": "2026-04-09 09:27:08",
     "force_restart_report": false,
     "last_daily_report_date": "2026-04-08",
-    "last_run_id": "20260409-092100"
+    "last_run_id": "20260409-092700"
   },
   "https://yklawfirm-inherit.co.kr/": {
     "ok": true,
@@ -45879,9 +45969,9 @@
     "type": "redirect",
     "status_class": "REDIRECT",
     "summary": "redirect_ok",
-    "checked_at": "2026-04-09 09:21:00",
+    "checked_at": "2026-04-09 09:27:00",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 09:21:00",
+    "last_ok_at": "2026-04-09 09:27:00",
     "consecutive_failures": 0,
     "actual": "301 -> https://www.yklawfirm.co.kr/ | final=200",
     "expected": "301/302/307/308 -> https://www.yklawfirm.co.kr/"
@@ -45893,9 +45983,9 @@
     "type": "service",
     "status_class": "HTTP",
     "summary": "service_ok",
-    "checked_at": "2026-04-09 09:21:00",
+    "checked_at": "2026-04-09 09:27:00",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 09:21:00",
+    "last_ok_at": "2026-04-09 09:27:00",
     "consecutive_failures": 0,
     "actual": "200",
     "expected": "200"
@@ -45907,9 +45997,9 @@
     "type": "redirect",
     "status_class": "REDIRECT",
     "summary": "redirect_ok",
-    "checked_at": "2026-04-09 09:21:01",
+    "checked_at": "2026-04-09 09:27:01",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 09:21:01",
+    "last_ok_at": "2026-04-09 09:27:01",
     "consecutive_failures": 0,
     "actual": "301 -> https://www.yklawfirm-crime.co.kr/ | final=200",
     "expected": "301/302/307/308 -> https://www.yklawfirm-crime.co.kr/"
@@ -45921,9 +46011,9 @@
     "type": "service",
     "status_class": "HTTP",
     "summary": "service_ok",
-    "checked_at": "2026-04-09 09:21:01",
+    "checked_at": "2026-04-09 09:27:01",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 09:21:01",
+    "last_ok_at": "2026-04-09 09:27:01",
     "consecutive_failures": 0,
     "actual": "200",
     "expected": "200"
@@ -45935,9 +46025,9 @@
     "type": "redirect",
     "status_class": "REDIRECT",
     "summary": "redirect_ok",
-    "checked_at": "2026-04-09 09:21:01",
+    "checked_at": "2026-04-09 09:27:02",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 09:21:01",
+    "last_ok_at": "2026-04-09 09:27:02",
     "consecutive_failures": 0,
     "actual": "301 -> https://www.yklawfirm-divorce.co.kr/ | final=200",
     "expected": "301/302/307/308 -> https://www.yklawfirm-divorce.co.kr/"
@@ -45949,9 +46039,9 @@
     "type": "service",
     "status_class": "HTTP",
     "summary": "service_ok",
-    "checked_at": "2026-04-09 09:21:02",
+    "checked_at": "2026-04-09 09:27:02",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 09:21:02",
+    "last_ok_at": "2026-04-09 09:27:02",
     "consecutive_failures": 0,
     "actual": "200",
     "expected": "200"
@@ -45963,9 +46053,9 @@
     "type": "redirect",
     "status_class": "REDIRECT",
     "summary": "redirect_ok",
-    "checked_at": "2026-04-09 09:21:02",
+    "checked_at": "2026-04-09 09:27:03",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 09:21:02",
+    "last_ok_at": "2026-04-09 09:27:03",
     "consecutive_failures": 0,
     "actual": "301 -> https://www.yklawfirm-civil.co.kr/ | final=200",
     "expected": "301/302/307/308 -> https://www.yklawfirm-civil.co.kr/"
@@ -45977,9 +46067,9 @@
     "type": "service",
     "status_class": "HTTP",
     "summary": "service_ok",
-    "checked_at": "2026-04-09 09:21:03",
+    "checked_at": "2026-04-09 09:27:03",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 09:21:03",
+    "last_ok_at": "2026-04-09 09:27:03",
     "consecutive_failures": 0,
     "actual": "200",
     "expected": "200"
@@ -45991,9 +46081,9 @@
     "type": "redirect",
     "status_class": "REDIRECT",
     "summary": "redirect_ok",
-    "checked_at": "2026-04-09 09:21:03",
+    "checked_at": "2026-04-09 09:27:03",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 09:21:03",
+    "last_ok_at": "2026-04-09 09:27:03",
     "consecutive_failures": 0,
     "actual": "301 -> https://www.yklawfirm-assault.co.kr/ | final=200",
     "expected": "301/302/307/308 -> https://www.yklawfirm-assault.co.kr/"
@@ -46005,9 +46095,9 @@
     "type": "service",
     "status_class": "HTTP",
     "summary": "service_ok",
-    "checked_at": "2026-04-09 09:21:04",
+    "checked_at": "2026-04-09 09:27:04",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 09:21:04",
+    "last_ok_at": "2026-04-09 09:27:04",
     "consecutive_failures": 0,
     "actual": "200",
     "expected": "200"
@@ -46019,9 +46109,9 @@
     "type": "redirect",
     "status_class": "REDIRECT",
     "summary": "redirect_ok",
-    "checked_at": "2026-04-09 09:21:04",
+    "checked_at": "2026-04-09 09:27:04",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 09:21:04",
+    "last_ok_at": "2026-04-09 09:27:04",
     "consecutive_failures": 0,
     "actual": "301 -> https://www.yklawfirm-inherit.co.kr/ | final=200",
     "expected": "301/302/307/308 -> https://www.yklawfirm-inherit.co.kr/"
@@ -46033,9 +46123,9 @@
     "type": "service",
     "status_class": "HTTP",
     "summary": "service_ok",
-    "checked_at": "2026-04-09 09:21:05",
+    "checked_at": "2026-04-09 09:27:05",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 09:21:05",
+    "last_ok_at": "2026-04-09 09:27:05",
     "consecutive_failures": 0,
     "actual": "200",
     "expected": "200"
@@ -46047,9 +46137,9 @@
     "type": "redirect",
     "status_class": "REDIRECT",
     "summary": "redirect_ok",
-    "checked_at": "2026-04-09 09:21:05",
+    "checked_at": "2026-04-09 09:27:05",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 09:21:05",
+    "last_ok_at": "2026-04-09 09:27:05",
     "consecutive_failures": 0,
     "actual": "301 -> https://www.yklawfirm-drug.co.kr/ | final=200",
     "expected": "301/302/307/308 -> https://www.yklawfirm-drug.co.kr/"
@@ -46061,9 +46151,9 @@
     "type": "service",
     "status_class": "HTTP",
     "summary": "service_ok",
-    "checked_at": "2026-04-09 09:21:05",
+    "checked_at": "2026-04-09 09:27:06",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 09:21:05",
+    "last_ok_at": "2026-04-09 09:27:06",
     "consecutive_failures": 0,
     "actual": "200",
     "expected": "200"
@@ -46075,9 +46165,9 @@
     "type": "redirect",
     "status_class": "REDIRECT",
     "summary": "redirect_ok",
-    "checked_at": "2026-04-09 09:21:06",
+    "checked_at": "2026-04-09 09:27:06",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 09:21:06",
+    "last_ok_at": "2026-04-09 09:27:06",
     "consecutive_failures": 0,
     "actual": "301 -> https://www.yklawfirm-traffic.co.kr/ | final=200",
     "expected": "301/302/307/308 -> https://www.yklawfirm-traffic.co.kr/"
@@ -46089,9 +46179,9 @@
     "type": "service",
     "status_class": "HTTP",
     "summary": "service_ok",
-    "checked_at": "2026-04-09 09:21:06",
+    "checked_at": "2026-04-09 09:27:06",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 09:21:06",
+    "last_ok_at": "2026-04-09 09:27:06",
     "consecutive_failures": 0,
     "actual": "200",
     "expected": "200"
@@ -46103,9 +46193,9 @@
     "type": "redirect",
     "status_class": "REDIRECT",
     "summary": "redirect_ok",
-    "checked_at": "2026-04-09 09:21:07",
+    "checked_at": "2026-04-09 09:27:07",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 09:21:07",
+    "last_ok_at": "2026-04-09 09:27:07",
     "consecutive_failures": 0,
     "actual": "301 -> https://www.yklawfirm-school.co.kr/ | final=200",
     "expected": "301/302/307/308 -> https://www.yklawfirm-school.co.kr/"
@@ -46117,9 +46207,9 @@
     "type": "service",
     "status_class": "HTTP",
     "summary": "service_ok",
-    "checked_at": "2026-04-09 09:21:07",
+    "checked_at": "2026-04-09 09:27:07",
     "first_failed_at": null,
-    "last_ok_at": "2026-04-09 09:21:07",
+    "last_ok_at": "2026-04-09 09:27:07",
     "consecutive_failures": 0,
     "actual": "200",
     "expected": "200"

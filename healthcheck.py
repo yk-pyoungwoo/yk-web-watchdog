@@ -62,7 +62,9 @@ if SLACK_POST_MODE not in {"json", "payload"}:
     raise RuntimeError("SLACK_POST_MODE must be json or payload")
 
 SLACK_IMAGE_URL = env_str("SLACK_IMAGE_URL", "")
-SLACK_MAX_CHARS = env_int("SLACK_MAX_CHARS", 3500)
+# Slack 웹훅은 메시지당 길이 제한이 있어 여러 건으로 나눕니다. 헤더·오류 본문 등은 잘라내지 않으며,
+# 긴 내용은 연속 메시지로 이어 붙입니다. 전송 오류 시 SLACK_MAX_CHARS를 3000~4000대로 낮춰 보세요.
+SLACK_MAX_CHARS = env_int("SLACK_MAX_CHARS", 4000)
 SLACK_EMOJI_ROTATION = env_bool("SLACK_EMOJI_ROTATION", True)
 
 ENABLE_MENTIONS = env_bool("ENABLE_MENTIONS", True)
@@ -87,8 +89,6 @@ DAILY_REPORT_TIME = env_str("DAILY_REPORT_TIME", "09:00")
 
 CERT_WARN_DAYS = env_int("CERT_WARN_DAYS", 30)
 CERT_ALERT_DAYS = env_int("CERT_ALERT_DAYS", 7)
-CERT_MAX_SAN_ITEMS = env_int("CERT_MAX_SAN_ITEMS", 15)
-
 HEADER_KEYS = [
     h.lower()
     for h in env_csv(
@@ -337,6 +337,8 @@ class FinalProbe:
 @dataclass
 class EndpointResult:
     name: str
+    site_group: str
+    site_label: str
     display_name: str
     type: str
     url: str
@@ -827,9 +829,8 @@ def shorten_dn(dn: Optional[str]) -> Optional[str]:
         if p.startswith(("O=", "CN=", "O =", "CN =")):
             keep.append(p.replace(" = ", "=").replace(" =", "=").replace("= ", "="))
     if keep:
-        joined = ", ".join(keep)
-        return joined if len(joined) <= 180 else joined[:180] + "…"
-    return dn[:180] + ("…" if len(dn) > 180 else "")
+        return ", ".join(keep)
+    return dn
 
 
 def ssl_info(host: str) -> SslInfo:
@@ -908,9 +909,6 @@ def ssl_info(host: str) -> SslInfo:
                             covers = True
                             break
 
-        if len(san_list) > CERT_MAX_SAN_ITEMS:
-            san_list = san_list[:CERT_MAX_SAN_ITEMS] + ["…(truncated)"]
-
         return SslInfo(
             notafter=notafter,
             expires_in_days=expires_in_days,
@@ -976,7 +974,7 @@ def probe_single(url: str, follow_redirects: bool) -> FinalProbe:
             total_ms = safe_int_ms(str(raw.get("time_total", "")))
             remote_ip = str(raw.get("remote_ip", "")).strip() or None
         except Exception:
-            err = f"failed_to_parse_curl_output={stdout[:200]}"
+            err = f"failed_to_parse_curl_output={stdout}"
 
         ok = proc.returncode == 0 and http_code is not None
         if proc.returncode != 0:
@@ -1078,9 +1076,163 @@ def redirect_chain_text(chain: Optional[List[str]]) -> str:
     return " -> ".join(short_url(x) for x in chain)
 
 
+def endpoint_site_group(endpoint: Dict[str, Any]) -> str:
+    raw = endpoint.get("site_group")
+    if raw is not None and str(raw).strip():
+        return str(raw).strip()
+    name = endpoint.get("name") or ""
+    if name.endswith("-apex"):
+        return name[: -len("-apex")]
+    if name.endswith("-www"):
+        return name[: -len("-www")]
+    return name
+
+
+def endpoint_site_label(endpoint: Dict[str, Any]) -> str:
+    raw = endpoint.get("site_label")
+    if raw is not None and str(raw).strip():
+        return str(raw).strip()
+    display = endpoint.get("display_name") or endpoint.get("name") or ""
+    if display.startswith("www."):
+        return display[4:]
+    return display
+
+
+def role_label_for_check(endpoint_type: str) -> str:
+    if endpoint_type == "redirect":
+        return "루트(apex) → www"
+    if endpoint_type == "service":
+        return "www 직접"
+    return endpoint_type
+
+
+def group_endpoint_results(
+    results: List[EndpointResult],
+) -> List[Tuple[str, List[EndpointResult]]]:
+    order: List[str] = []
+    bucket: Dict[str, List[EndpointResult]] = {}
+    labels: Dict[str, str] = {}
+    for r in results:
+        g = r.site_group
+        if g not in bucket:
+            bucket[g] = []
+            labels[g] = r.site_label
+            order.append(g)
+        bucket[g].append(r)
+
+    def sort_key(res: EndpointResult) -> int:
+        if res.type == "redirect":
+            return 0
+        if res.type == "service":
+            return 1
+        return 9
+
+    return [(labels[g], sorted(bucket[g], key=sort_key)) for g in order]
+
+
+def render_subcheck_detail_lines(r: EndpointResult) -> Tuple[List[str], bool]:
+    """한 개의 체크(리다이렉트 또는 서비스)에 대한 상세 줄. 메시지 잘라내지 않음."""
+    cert_warn_hit = False
+    lines: List[str] = []
+
+    lines.append(f"기대: `{r.expected}`")
+    lines.append(f"실측: `{r.actual}`")
+    lines.append(f"분류: `{r.status_class}` · 요약: `{r.summary}`")
+
+    if r.consecutive_failures:
+        lines.append(f"연속 실패: `{r.consecutive_failures}`회")
+    if r.first_failed_at:
+        lines.append(f"최초 실패 시각: `{r.first_failed_at}`")
+    if r.last_ok_at:
+        lines.append(f"직전 정상 시각: `{r.last_ok_at}`")
+
+    if r.redirect_probe:
+        rp = r.redirect_probe
+        lines.append(
+            f"첫 응답: status=`{rp.status_code or '-'}` · "
+            f"Location=`{rp.location or '-'}`"
+        )
+        if rp.err:
+            lines.append(f"첫 응답 오류: `{rp.err}`")
+
+    if r.final_probe:
+        fp = r.final_probe
+        lines.append(
+            f"최종: status=`{fp.status_code or '-'}` · IP=`{fp.remote_ip or '-'}` · "
+            f"total=`{fp.total_ms if fp.total_ms is not None else '-'}ms`"
+        )
+
+        timing_parts = []
+        if fp.dns_ms is not None:
+            timing_parts.append(f"DNS={fp.dns_ms}ms")
+        if fp.connect_ms is not None:
+            timing_parts.append(f"Conn={fp.connect_ms}ms")
+        if fp.tls_ms is not None:
+            timing_parts.append(f"TLS={fp.tls_ms}ms")
+        if fp.ttfb_ms is not None:
+            timing_parts.append(f"TTFB={fp.ttfb_ms}ms")
+        if fp.total_ms is not None:
+            timing_parts.append(f"Total={fp.total_ms}ms")
+        if timing_parts:
+            lines.append(f"타이밍: `{' | '.join(timing_parts)}`")
+
+        chain_str = redirect_chain_text(fp.redirect_chain)
+        if chain_str != "-":
+            lines.append(f"리다이렉트 체인: `{chain_str}`")
+
+        header_text = headers_pretty(fp.headers or {})
+        if header_text and header_text != "-":
+            lines.append(f"응답 헤더: `{header_text}`")
+
+        if fp.err:
+            lines.append(f"오류: `{fp.err}`")
+
+    if r.dns_host:
+        lines.append(
+            f"DNS(`{r.dns_host}`): A=`{','.join(r.dns_a) if r.dns_a else '-'}` "
+            f"AAAA=`{','.join(r.dns_aaaa) if r.dns_aaaa else '-'}`"
+        )
+
+    if r.ssl:
+        ssl_parts = []
+        if r.ssl.notafter:
+            ssl_parts.append(f"만료: `{r.ssl.notafter}`")
+        if r.ssl.expires_in_days is not None:
+            days_left = r.ssl.expires_in_days
+            if days_left < 0:
+                ssl_parts.append(f"🚨 만료됨 ({abs(days_left)}일 전)")
+                cert_warn_hit = True
+            elif days_left <= CERT_ALERT_DAYS:
+                ssl_parts.append(f"🚨 남은 {days_left}일")
+                cert_warn_hit = True
+            elif days_left <= CERT_WARN_DAYS:
+                ssl_parts.append(f"⚠️ 남은 {days_left}일")
+                cert_warn_hit = True
+            else:
+                ssl_parts.append(f"✅ 남은 {days_left}일")
+        if ssl_parts:
+            lines.append(f"SSL: {' | '.join(ssl_parts)}")
+        if r.ssl.subject:
+            lines.append(f"SSL Subject: `{r.ssl.subject}`")
+        if r.ssl.issuer:
+            lines.append(f"SSL Issuer: `{r.ssl.issuer}`")
+        if r.ssl.san:
+            if r.ssl.san_covers_host is True:
+                coverage = " (호스트 SAN 포함)"
+            elif r.ssl.san_covers_host is False:
+                coverage = " (호스트 SAN 불일치)"
+            else:
+                coverage = ""
+            lines.append(f"SAN{coverage}: `{', '.join(r.ssl.san)}`")
+
+    return lines, cert_warn_hit
+
+
 def check_endpoint(endpoint: Dict[str, Any], state: Dict[str, Any]) -> EndpointResult:
     checked_at = now_local_str()
     display_name = endpoint.get("display_name") or endpoint.get("name") or endpoint["url"]
+    site_group = endpoint_site_group(endpoint)
+    site_label = endpoint_site_label(endpoint)
     endpoint_type = endpoint["type"]
     url = endpoint["url"]
 
@@ -1145,6 +1297,8 @@ def check_endpoint(endpoint: Dict[str, Any], state: Dict[str, Any]) -> EndpointR
 
     return EndpointResult(
         name=endpoint["name"],
+        site_group=site_group,
+        site_label=site_label,
         display_name=display_name,
         type=endpoint_type,
         url=url,
@@ -1266,7 +1420,8 @@ def _chunk_text_for_slack(s: str, first_limit: int, rest_limit: int) -> List[str
 
 def _split_slack_messages(full_text: str) -> List[str]:
     max_len = max(500, SLACK_MAX_CHARS)
-    rest_lim = max(100, max_len - _SLACK_CHUNK_MARKER_MAX)
+    marker_room = max(60, _SLACK_CHUNK_MARKER_MAX)
+    rest_lim = max(100, max_len - marker_room)
     if len(full_text) <= max_len:
         return [full_text]
     raw_parts = _chunk_text_for_slack(full_text, max_len, rest_lim)
@@ -1275,7 +1430,7 @@ def _split_slack_messages(full_text: str) -> List[str]:
     out = [raw_parts[0]]
     total = len(raw_parts)
     for i in range(1, total):
-        out.append(f"*[… {i + 1}/{total}]*\n" + raw_parts[i])
+        out.append(f"【이어쓰기 {i + 1}/{total} · 앞부분 잘림 없음】\n" + raw_parts[i])
     return out
 
 
@@ -1317,9 +1472,7 @@ def headers_pretty(h: Dict[str, str]) -> str:
         if k in h:
             parts.append(f"{mapping.get(k, k)}={h[k]}")
     if not parts:
-        for i, (k, v) in enumerate(h.items()):
-            if i >= 6:
-                break
+        for k, v in h.items():
             parts.append(f"{k}={v}")
     return " | ".join(parts)
 
@@ -1341,117 +1494,57 @@ def build_slack_prefix(results: List[EndpointResult], cert_warn_hit: bool) -> st
 
 def build_resolved_text(results: List[EndpointResult], run_id: str, host: str) -> str:
     lines = [
-        "✅ *All Services Recovered*",
+        "✅ *전체 복구됨 (All OK)*",
         "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-        f"🆔 `{run_id}` | 🖥️ `{host}` | 🕐 `{now_local_str()}`",
+        f"🆔 `{run_id}` · 🖥️ `{host}` · 🕐 `{now_local_str()}`",
         "",
     ]
-    for r in results:
-        lines.append(f"🟢 `{r.display_name}` [{r.type}] - actual=`{r.actual}`")
-    return "\n".join(lines)
+    for site_label, items in group_endpoint_results(results):
+        roles = []
+        for r in items:
+            roles.append(f"{role_label_for_check(r.type)} ✅")
+        lines.append(f"🟢 *{site_label}*")
+        lines.append(f"   {' · '.join(roles)}")
+        lines.append("")
+    lines.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    return "\n".join(lines).strip()
 
 
 def build_slack_text(results: List[EndpointResult], run_id: str, host: str) -> Tuple[str, bool]:
     lines = [
-        "🔍 *Health Check Report*",
+        "🔍 *헬스체크 리포트*",
         "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-        f"🆔 `{run_id}` | 🖥️ `{host}` | 🕐 `{now_local_str()}`",
-        f"⏱️ Timeout: `{HC_TIMEOUT_SEC}s` | 🐌 Slow: `>={HC_SLOW_MS}ms` | 📊 Mode: `{REPORT_MODE}`",
+        f"🆔 `{run_id}` · 🖥️ `{host}` · 🕐 `{now_local_str()}`",
+        f"⏱️ 타임아웃 `{HC_TIMEOUT_SEC}s` · 🐌 느림 기준 `≥{HC_SLOW_MS}ms` · 📊 모드 `{REPORT_MODE}`",
+        "",
+        "*사이트별* — 같은 줄의 `루트→www`와 `www 직접`은 한 사이트의 두 단계입니다.",
         "",
     ]
 
     cert_warn_hit = False
 
-    for r in results:
-        icon = "✅" if r.ok else "❌"
-        lines.append(f"{icon} *{r.display_name}* `[{r.type}]`")
-        lines.append(f"   🎯 Expected: `{r.expected}`")
-        lines.append(f"   📊 Actual: `{r.actual}`")
-        lines.append(f"   🧭 Class: `{r.status_class}` | 📝 Summary: `{r.summary}`")
+    for site_label, items in group_endpoint_results(results):
+        all_ok = all(x.ok for x in items)
+        site_icon = "✅" if all_ok else "❌"
+        lines.append(f"{site_icon} *{site_label}*")
 
-        if r.consecutive_failures:
-            lines.append(f"   🔁 Consecutive failures: `{r.consecutive_failures}`")
-        if r.first_failed_at:
-            lines.append(f"   ⛔ First failed at: `{r.first_failed_at}`")
-        if r.last_ok_at:
-            lines.append(f"   ✅ Last ok at: `{r.last_ok_at}`")
+        status_bits = []
+        for x in items:
+            status_bits.append(f"{role_label_for_check(x.type)} {'✅' if x.ok else '❌'}")
+        lines.append(f"   요약: {' · '.join(status_bits)}")
+        lines.append("")
 
-        if r.redirect_probe:
-            lines.append(
-                f"   🔀 Redirect first hop: status=`{r.redirect_probe.status_code or '-'}` | location=`{r.redirect_probe.location or '-'}`"
-            )
+        for r in items:
+            sub_icon = "✅" if r.ok else "❌"
+            role = role_label_for_check(r.type)
+            lines.append(f"   {sub_icon} *{role}* (`{r.name}` · `{r.display_name}`)")
+            detail_lines, cw = render_subcheck_detail_lines(r)
+            cert_warn_hit = cert_warn_hit or cw
+            for dl in detail_lines:
+                lines.append(f"      · {dl}")
+            lines.append("")
 
-        if r.final_probe:
-            fp = r.final_probe
-            lines.append(
-                f"   🌐 Final: status=`{fp.status_code or '-'}` | IP=`{fp.remote_ip or '-'}` | total=`{fp.total_ms if fp.total_ms is not None else '-'}ms`"
-            )
-
-            timing_parts = []
-            if fp.dns_ms is not None:
-                timing_parts.append(f"DNS={fp.dns_ms}ms")
-            if fp.connect_ms is not None:
-                timing_parts.append(f"Conn={fp.connect_ms}ms")
-            if fp.tls_ms is not None:
-                timing_parts.append(f"TLS={fp.tls_ms}ms")
-            if fp.ttfb_ms is not None:
-                timing_parts.append(f"TTFB={fp.ttfb_ms}ms")
-            if fp.total_ms is not None:
-                timing_parts.append(f"Total={fp.total_ms}ms")
-            if timing_parts:
-                lines.append(f"   ⚡ Timing: `{' | '.join(timing_parts)}`")
-
-            chain_str = redirect_chain_text(fp.redirect_chain)
-            if chain_str != "-":
-                lines.append(f"   🔁 Redirect chain: `{chain_str}`")
-
-            header_text = headers_pretty(fp.headers or {})
-            if header_text and header_text != "-":
-                if len(header_text) > 200:
-                    header_text = header_text[:200] + "..."
-                lines.append(f"   📨 Headers: `{header_text}`")
-
-            if fp.err:
-                short_err = fp.err[:220] + ("..." if len(fp.err) > 220 else "")
-                lines.append(f"   ⚠️ Error: `{short_err}`")
-
-        if r.dns_host:
-            lines.append(
-                f"   🌍 DNS({r.dns_host}): A=`{','.join(r.dns_a) if r.dns_a else '-'}` AAAA=`{','.join(r.dns_aaaa) if r.dns_aaaa else '-'}`"
-            )
-
-        if r.ssl:
-            ssl_parts = []
-            if r.ssl.notafter:
-                ssl_parts.append(f"Expires: `{r.ssl.notafter}`")
-            if r.ssl.expires_in_days is not None:
-                days_left = r.ssl.expires_in_days
-                if days_left < 0:
-                    ssl_parts.append(f"🚨 *expired* ({abs(days_left)}d ago)")
-                    cert_warn_hit = True
-                elif days_left <= CERT_ALERT_DAYS:
-                    ssl_parts.append(f"🚨 *{days_left}d left*")
-                    cert_warn_hit = True
-                elif days_left <= CERT_WARN_DAYS:
-                    ssl_parts.append(f"⚠️ *{days_left}d left*")
-                    cert_warn_hit = True
-                else:
-                    ssl_parts.append(f"✅ {days_left}d left")
-            if ssl_parts:
-                lines.append(f"   🔒 SSL: {' | '.join(ssl_parts)}")
-            if r.ssl.subject:
-                lines.append(f"   📜 Subject: `{r.ssl.subject}`")
-            if r.ssl.issuer:
-                lines.append(f"   🏢 Issuer: `{r.ssl.issuer}`")
-            if r.ssl.san:
-                if r.ssl.san_covers_host is True:
-                    coverage = " (✅ covers host)"
-                elif r.ssl.san_covers_host is False:
-                    coverage = " (❌ does not cover host)"
-                else:
-                    coverage = ""
-                lines.append(f"   📋 SAN{coverage}: `{', '.join(r.ssl.san)}`")
-
+        lines.append("   ———")
         lines.append("")
 
     lines.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
