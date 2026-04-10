@@ -88,8 +88,9 @@ http {
 	#   MISS가 과다하게 발생함.
 	# 구현:
 	#   nginx map 은 한 번에 하나의 패턴만 안전하게 제거하기 어려워, 동일 규칙을
-	#   qs_u01 … qs_u10 까지 10번 반복 적용 (utm_* 파라미터 최대 10개 제거 가정).
-	#   이후 gclid → gcl_keyword, gcl_network, gad_source, gad_campaignid → fbclid, msclkid, dclid, yclid → NaPm(네이버 BSA 등) → _rsc(Next RSC 캐시 버스터) 제거.
+	#   qs_u01 … qs_u15 까지 15번 반복 적용 (utm_* 파라미터 최대 15개 제거 가정).
+	#   이후 gclid → gcl_keyword, gcl_network, gad_source, gad_campaignid → fbclid, msclkid, dclid, yclid → NaPm(네이버 BSA 등)
+	#   → mobon(moba/mhhk/mobsc) 및 기타 클릭·추적 파라미터 → mc_cid/mc_eid(메일·뉴스레터) 제거 → _rsc(Next RSC 캐시 버스터) 제거.
 	#   앞뒤 & 정리, 연속 && 를 & 로 치환 (trim1~trim3).
 	# 최종:
 	#   $cache_query_string = "" 이면 쿼리 없음 → 키에 ? 붙이지 않음.
@@ -97,7 +98,7 @@ http {
 	#
 	# 주의:
 	#   keyword, type 등 비즈니스 쿼리는 제거하지 않음 — 내용이 다른 페이지는 다른 키.
-	#   utm 이 10개 초과면 일부가 키에 남을 수 있음 → 필요 시 qs_u11 체인 추가.
+	#   utm 이 15개 초과면 일부가 키에 남을 수 있음 → 필요 시 qs_u16 체인 추가.
 	##
 	map $args $qs_u01 {
 		default $args;
@@ -169,9 +170,44 @@ http {
 		~^(.*)&utm_[^=]+=[^&]*&(.*)$ $1&$2;
 		~^(.*)&utm_[^=]+=[^&]*$ $1;
 	}
-	# Google Ads 클릭 ID
-	map $qs_u10 $qs_g1 {
+	map $qs_u10 $qs_u11 {
 		default $qs_u10;
+		~^utm_[^=]+=[^&]*&(.*)$ $1;
+		~^utm_[^=]+=[^&]*$ "";
+		~^(.*)&utm_[^=]+=[^&]*&(.*)$ $1&$2;
+		~^(.*)&utm_[^=]+=[^&]*$ $1;
+	}
+	map $qs_u11 $qs_u12 {
+		default $qs_u11;
+		~^utm_[^=]+=[^&]*&(.*)$ $1;
+		~^utm_[^=]+=[^&]*$ "";
+		~^(.*)&utm_[^=]+=[^&]*&(.*)$ $1&$2;
+		~^(.*)&utm_[^=]+=[^&]*$ $1;
+	}
+	map $qs_u12 $qs_u13 {
+		default $qs_u12;
+		~^utm_[^=]+=[^&]*&(.*)$ $1;
+		~^utm_[^=]+=[^&]*$ "";
+		~^(.*)&utm_[^=]+=[^&]*&(.*)$ $1&$2;
+		~^(.*)&utm_[^=]+=[^&]*$ $1;
+	}
+	map $qs_u13 $qs_u14 {
+		default $qs_u13;
+		~^utm_[^=]+=[^&]*&(.*)$ $1;
+		~^utm_[^=]+=[^&]*$ "";
+		~^(.*)&utm_[^=]+=[^&]*&(.*)$ $1&$2;
+		~^(.*)&utm_[^=]+=[^&]*$ $1;
+	}
+	map $qs_u14 $qs_u15 {
+		default $qs_u14;
+		~^utm_[^=]+=[^&]*&(.*)$ $1;
+		~^utm_[^=]+=[^&]*$ "";
+		~^(.*)&utm_[^=]+=[^&]*&(.*)$ $1&$2;
+		~^(.*)&utm_[^=]+=[^&]*$ $1;
+	}
+	# Google Ads 클릭 ID
+	map $qs_u15 $qs_g1 {
+		default $qs_u15;
 		~^gclid=[^&]*&(.*)$ $1;
 		~^gclid=[^&]*$ "";
 		~^(.*)&gclid=[^&]*&(.*)$ $1&$2;
@@ -250,11 +286,94 @@ http {
 		~^(.*)&napm=[^&]*&(.*)$ $1&$2;
 		~^(.*)&napm=[^&]*$ $1;
 	}
+	# Mobon 등: utm_* 제거 뒤에도 moba/mhhk/mobsc 가 남아 proxy_cache_key 가 달라지는 경우가 많음 (access 로그에서 확인)
+	map $qs_napm $qs_strip_moba {
+		default $qs_napm;
+		~^moba=[^&]*&(.*)$ $1;
+		~^moba=[^&]*$ "";
+		~^(.*)&moba=[^&]*&(.*)$ $1&$2;
+		~^(.*)&moba=[^&]*$ $1;
+	}
+	map $qs_strip_moba $qs_strip_mhhk {
+		default $qs_strip_moba;
+		~^mhhk=[^&]*&(.*)$ $1;
+		~^mhhk=[^&]*$ "";
+		~^(.*)&mhhk=[^&]*&(.*)$ $1&$2;
+		~^(.*)&mhhk=[^&]*$ $1;
+	}
+	map $qs_strip_mhhk $qs_strip_mobsc {
+		default $qs_strip_mhhk;
+		~^mobsc=[^&]*&(.*)$ $1;
+		~^mobsc=[^&]*$ "";
+		~^(.*)&mobsc=[^&]*&(.*)$ $1&$2;
+		~^(.*)&mobsc=[^&]*$ $1;
+	}
+	# Google iOS/Android 앱 클릭 식별자
+	map $qs_strip_mobsc $qs_strip_wbraid {
+		default $qs_strip_mobsc;
+		~^wbraid=[^&]*&(.*)$ $1;
+		~^wbraid=[^&]*$ "";
+		~^(.*)&wbraid=[^&]*&(.*)$ $1&$2;
+		~^(.*)&wbraid=[^&]*$ $1;
+	}
+	map $qs_strip_wbraid $qs_strip_gbraid {
+		default $qs_strip_wbraid;
+		~^gbraid=[^&]*&(.*)$ $1;
+		~^gbraid=[^&]*$ "";
+		~^(.*)&gbraid=[^&]*&(.*)$ $1&$2;
+		~^(.*)&gbraid=[^&]*$ $1;
+	}
+	# TikTok / X(트위터) 클릭 ID
+	map $qs_strip_gbraid $qs_strip_ttclid {
+		default $qs_strip_gbraid;
+		~^ttclid=[^&]*&(.*)$ $1;
+		~^ttclid=[^&]*$ "";
+		~^(.*)&ttclid=[^&]*&(.*)$ $1&$2;
+		~^(.*)&ttclid=[^&]*$ $1;
+	}
+	map $qs_strip_ttclid $qs_strip_twclid {
+		default $qs_strip_ttclid;
+		~^twclid=[^&]*&(.*)$ $1;
+		~^twclid=[^&]*$ "";
+		~^(.*)&twclid=[^&]*&(.*)$ $1&$2;
+		~^(.*)&twclid=[^&]*$ $1;
+	}
+	# Instagram 공유 추적
+	map $qs_strip_twclid $qs_strip_igshid {
+		default $qs_strip_twclid;
+		~^igshid=[^&]*&(.*)$ $1;
+		~^igshid=[^&]*$ "";
+		~^(.*)&igshid=[^&]*&(.*)$ $1&$2;
+		~^(.*)&igshid=[^&]*$ $1;
+	}
+	# Google 검색 결과 등에서 붙는 세션성 파라미터(동일 페이지 캐시 키 통합)
+	map $qs_strip_igshid $qs_strip_srsltid {
+		default $qs_strip_igshid;
+		~^srsltid=[^&]*&(.*)$ $1;
+		~^srsltid=[^&]*$ "";
+		~^(.*)&srsltid=[^&]*&(.*)$ $1&$2;
+		~^(.*)&srsltid=[^&]*$ $1;
+	}
+	# Mailchimp / 이메일 캠페인 추적(뉴스레터 링크 등)
+	map $qs_strip_srsltid $qs_strip_mccid {
+		default $qs_strip_srsltid;
+		~^mc_cid=[^&]*&(.*)$ $1;
+		~^mc_cid=[^&]*$ "";
+		~^(.*)&mc_cid=[^&]*&(.*)$ $1&$2;
+		~^(.*)&mc_cid=[^&]*$ $1;
+	}
+	map $qs_strip_mccid $qs_strip_mceid {
+		default $qs_strip_mccid;
+		~^mc_eid=[^&]*&(.*)$ $1;
+		~^mc_eid=[^&]*$ "";
+		~^(.*)&mc_eid=[^&]*&(.*)$ $1&$2;
+		~^(.*)&mc_eid=[^&]*$ $1;
+	}
 	# Next.js RSC 요청 파라미터(_rsc=랜덤토큰) 제거
 	# - _rsc 는 요청마다 값이 달라 cache key 분산을 유발하므로 캐시 키에서만 제외
 	# - proxy_pass 로 전달되는 실제 요청 URI/쿼리는 변경되지 않음
-	map $qs_napm $qs_rsc {
-		default $qs_napm;
+	map $qs_strip_mceid $qs_rsc {
+		default $qs_strip_mceid;
 		~^_rsc=[^&]*&(.*)$ $1;
 		~^_rsc=[^&]*$ "";
 		~^(.*)&_rsc=[^&]*&(.*)$ $1&$2;
@@ -307,6 +426,9 @@ http {
 	# VM 의 /etc/logrotate.d/ 에 배포해 access.log / cache-access.log / error.log 를
 	# 일별·maxsize 초과 시 회전·압축·보관 개수 제한(rotate).
 	# cache-access.log 는 VM에서 생성·쓰기 가능해야 하며, 기본 nginx logrotate 와 경로가 겹치면 규칙 통합.
+	#
+	# 집계 팁: 필드 구분은 탭(\\t). Ubuntu 의 sudo sh -c 는 dash 이라 bash 전용 $'\\t' 가 동작하지 않아
+	# grep -c $'\\tcache=MISS\\t' 가 0이 될 수 있음 → MISS 는 grep -F 'cache=MISS' 등으로 세는 것이 안전.
 	##
 	log_format cache_status '$time_iso8601\t$server_name\t'
 		'"$request"\t$status\t'
