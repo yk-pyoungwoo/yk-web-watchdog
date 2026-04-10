@@ -105,7 +105,7 @@ http {
 	#   nginx map 은 한 번에 하나의 패턴만 안전하게 제거하기 어려워, 동일 규칙을
 	#   qs_u01 … qs_u15 까지 15번 반복 적용 (utm_* 파라미터 최대 15개 제거 가정).
 	#   이후 gclid → … → yclid → 네이버 광고 n_* (n_campaign 등, n_[^=]+ 최대 15회 제거) → NaPm(네이버 BSA 등)
-	#   → mobon(moba/mhhk/mobsc) 및 기타 클릭·추적 파라미터 → mc_cid/mc_eid(메일·뉴스레터) 제거 → _rsc(Next RSC 캐시 버스터) 제거.
+	#   → mobon(moba/mhhk/mobsc) 및 기타 클릭·추적 파라미터 → gbraid 뒤 v·vt·ckattempt(구 dete/봇 URL) → mc_cid/mc_eid 제거 → _rsc(Next RSC) 제거.
 	#   앞뒤 & 정리, 연속 && 를 & 로 치환 (trim1~trim3).
 	# 최종:
 	#   $cache_query_string = "" 이면 쿼리 없음 → 키에 ? 붙이지 않음.
@@ -444,9 +444,33 @@ http {
 		~^(.*)&gbraid=[^&]*&(.*)$ $1&$2;
 		~^(.*)&gbraid=[^&]*$ $1;
 	}
-	# TikTok / X(트위터) 클릭 ID
-	map $qs_strip_gbraid $qs_strip_ttclid {
+	# 구 PHP /dete/… 에서 붙는 세션성 v= (vm-1·2 로그 상위). 비즈니스에 ?v= 로 페이지를 구분하면 v·vt 블록 제거.
+	map $qs_strip_gbraid $qs_strip_v {
 		default $qs_strip_gbraid;
+		~^v=[^&]*&(.*)$ $1;
+		~^v=[^&]*$ "";
+		~^(.*)&v=[^&]*&(.*)$ $1&$2;
+		~^(.*)&v=[^&]*$ $1;
+	}
+	# dete/introduction 등 v= 와 함께 오는 vt= (vm-2 UTC 05시대). ?vt= 가 의미 있는 경로가 있으면 제거.
+	map $qs_strip_v $qs_strip_vt {
+		default $qs_strip_v;
+		~^vt=[^&]*&(.*)$ $1;
+		~^vt=[^&]*$ "";
+		~^(.*)&vt=[^&]*&(.*)$ $1&$2;
+		~^(.*)&vt=[^&]*$ $1;
+	}
+	# 일부 구 URL의 ckattempt= (클릭 시도 카운트 등, 캐시 키만 정규화)
+	map $qs_strip_vt $qs_strip_ckattempt {
+		default $qs_strip_vt;
+		~^ckattempt=[^&]*&(.*)$ $1;
+		~^ckattempt=[^&]*$ "";
+		~^(.*)&ckattempt=[^&]*&(.*)$ $1&$2;
+		~^(.*)&ckattempt=[^&]*$ $1;
+	}
+	# TikTok / X(트위터) 클릭 ID
+	map $qs_strip_ckattempt $qs_strip_ttclid {
+		default $qs_strip_ckattempt;
 		~^ttclid=[^&]*&(.*)$ $1;
 		~^ttclid=[^&]*$ "";
 		~^(.*)&ttclid=[^&]*&(.*)$ $1&$2;
