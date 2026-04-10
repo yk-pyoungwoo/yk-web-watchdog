@@ -62,13 +62,13 @@ if SLACK_POST_MODE not in {"json", "payload"}:
     raise RuntimeError("SLACK_POST_MODE must be json or payload")
 
 SLACK_IMAGE_URL = env_str("SLACK_IMAGE_URL", "")
-# Slack 웹훅은 메시지당 길이 제한이 있어 여러 건으로 나눕니다. 헤더·오류 본문 등은 잘라내지 않으며,
-# 긴 내용은 연속 메시지로 이어 붙입니다. 전송 오류 시 SLACK_MAX_CHARS를 3000~4000대로 낮춰 보세요.
+# Slack webhooks cap message length; long text is sent as multiple sequential posts (no truncation of headers/errors).
+# If posts fail, try SLACK_MAX_CHARS around 3000-4000.
 SLACK_MAX_CHARS = env_int("SLACK_MAX_CHARS", 4000)
 SLACK_EMOJI_ROTATION = env_bool("SLACK_EMOJI_ROTATION", True)
 
 ENABLE_MENTIONS = env_bool("ENABLE_MENTIONS", True)
-ALWAYS_MENTION = env_csv("ALWAYS_MENTION", "@박평우")
+ALWAYS_MENTION = env_csv("ALWAYS_MENTION", "@\ubc15\ud3c9\uc6b0")
 CHANNEL_MENTION_ON_FAIL = env_bool("CHANNEL_MENTION_ON_FAIL", True)
 
 HC_TIMEOUT_SEC = env_float("HC_TIMEOUT_SEC", 10.0)
@@ -568,13 +568,9 @@ def build_daily_report(state: Dict[str, Any]) -> Optional[str]:
     success = total - fails
 
     lines = [
-        "📊 *일일 리포트*",
-        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-        f"📅 날짜: `{yesterday}`",
-        f"🔍 총 검사 횟수: `{total}`회",
-        f"✅ 성공: `{success}`회",
-        f"❌ 실패: `{fails}`회",
-        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "*\uc77c\uc77c \ub9ac\ud3ec\ud2b8*",
+        f"\ub0a0\uc9dc: `{yesterday}`",
+        f"\ucd1d \uac80\uc0ac: `{total}`\ud68c / \uc131\uacf5 `{success}` / \uc2e4\ud328 `{fails}`",
     ]
     return "\n".join(lines)
 
@@ -641,14 +637,10 @@ def build_restart_report(state: Dict[str, Any], last_run_time: str, current_time
     success = total - fails
 
     lines = [
-        "🔄 *재기동 리포트*",
-        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-        f"⏸️ 마지막 실행: `{last_run_time}`",
-        f"▶️ 재기동 시간: `{current_time}`",
-        f"🔍 기간 내 검사 횟수: `{total}`회",
-        f"✅ 성공: `{success}`회",
-        f"❌ 실패: `{fails}`회",
-        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "*\uc7ac\uae30\ub3d9 \ub9ac\ud3ec\ud2b8*",
+        f"\ub9c8\uc9c0\ub9c9 \uc2e4\ud589: `{last_run_time}`",
+        f"\uc7ac\uae30\ub3d9 \uc2dc\uac01: `{current_time}`",
+        f"\uae30\uac04 \ub0b4 \uac80\uc0ac: `{total}`\ud68c / \uc131\uacf5 `{success}` / \uc2e4\ud328 `{fails}`",
     ]
     return "\n".join(lines)
 
@@ -1100,9 +1092,9 @@ def endpoint_site_label(endpoint: Dict[str, Any]) -> str:
 
 def role_label_for_check(endpoint_type: str) -> str:
     if endpoint_type == "redirect":
-        return "루트(apex) → www"
+        return "\ub8e8\ud2b8(apex) \u2192 www"
     if endpoint_type == "service":
-        return "www 직접"
+        return "www \uc9c1\uc811"
     return endpoint_type
 
 
@@ -1130,35 +1122,126 @@ def group_endpoint_results(
     return [(labels[g], sorted(bucket[g], key=sort_key)) for g in order]
 
 
+def _site_check_pairs(items: List[EndpointResult]) -> List[Tuple[str, EndpointResult]]:
+    """\ud55c \uc0ac\uc774\ud2b8 \ub0b4 \ub8e8\ud2b8(apex)\u2192www / www \uc9c1\uc811 \uc810\uac80\uc744 \ud55c \ub369\uc5b4\ub9ac\ub85c \ubcf4\uc5ec \uc8fc\uae30 \uc704\ud55c \uc21c\uc11c."""
+    out: List[Tuple[str, EndpointResult]] = []
+    redirect = next((x for x in items if x.type == "redirect"), None)
+    service = next((x for x in items if x.type == "service"), None)
+    if redirect:
+        out.append(("\ub8e8\ud2b8(apex) \u2192 www", redirect))
+    if service:
+        out.append(("www \uc9c1\uc811", service))
+    seen = {id(x) for _, x in out}
+    for r in items:
+        if id(r) in seen:
+            continue
+        out.append((r.type, r))
+    return out
+
+
+def site_composite_headline(items: List[EndpointResult]) -> str:
+    parts: List[str] = []
+    for label, r in _site_check_pairs(items):
+        parts.append(f"{label} {'OK' if r.ok else 'FAIL'}")
+    return " \u00b7 ".join(parts) if parts else "-"
+
+
+def result_has_cert_warning(r: EndpointResult) -> bool:
+    if not r.ssl or r.ssl.expires_in_days is None:
+        return False
+    d = r.ssl.expires_in_days
+    return d < 0 or d <= CERT_WARN_DAYS
+
+
+def build_issue_summary_text(results: List[EndpointResult]) -> str:
+    lines: List[str] = ["*\uc694\uc57d (\ud604\uc7ac \ubb38\uc81c)*", ""]
+    failed = [r for r in results if not r.ok]
+    if failed:
+        lines.append("\uc2e4\ud328\ud55c \uc810\uac80:")
+        for site_label, items in group_endpoint_results(results):
+            bad = [r for r in items if not r.ok]
+            if not bad:
+                continue
+            bits: List[str] = []
+            for r in bad:
+                role = "\ub8e8\ud2b8\u2192www" if r.type == "redirect" else "www" if r.type == "service" else r.type
+                bits.append(f"{role}: `{r.summary}` \u2014 `{r.actual}`")
+            lines.append(f"- *{site_label}*: " + " | ".join(bits))
+        lines.append("")
+    else:
+        lines.append("\uc2e4\ud328\ud55c \uc810\uac80: \uc5c6\uc74c")
+        lines.append("")
+
+    cert_lines: List[str] = []
+    for r in results:
+        if not result_has_cert_warning(r):
+            continue
+        d = r.ssl.expires_in_days if r.ssl else None
+        who = r.ssl_host or r.display_name or r.name
+        if d is not None and d < 0:
+            cert_lines.append(f"- *{r.site_label}* / `{who}`: \ub9cc\ub8cc ({abs(d)}\uc77c \uc804)")
+        elif d is not None:
+            lvl = "\uc784\ubc15" if d <= CERT_ALERT_DAYS else "\uc8fc\uc758"
+            cert_lines.append(f"- *{r.site_label}* / `{who}`: {lvl}, \ub0a8\uc740 {d}\uc77c")
+
+    if cert_lines:
+        lines.append("\uc778\uc99d\uc11c:")
+        lines.extend(cert_lines)
+    else:
+        lines.append("\uc778\uc99d\uc11c \uc8fc\uc758: \uc5c6\uc74c")
+
+    return "\n".join(lines).strip()
+
+
+def build_recovery_summary_text(results: List[EndpointResult]) -> str:
+    pairs = group_endpoint_results(results)
+    n_checks = len(results)
+    n_sites = len(pairs)
+    lines = [
+        "*\uc694\uc57d (\ubcf5\uad6c)*",
+        "",
+        f"\uc2e4\ud328\ud55c \uc810\uac80: \uc5c6\uc74c (`{n_checks}`\uac74 / `{n_sites}`\uac1c \uc0ac\uc774\ud2b8).",
+    ]
+    cert_any = any(result_has_cert_warning(r) for r in results)
+    if cert_any:
+        lines.append(
+            "\uc778\uc99d\uc11c\ub294 \uc544\ub798 \ubcf8\ubb38\uc758 SSL \ud56d\ubaa9\uc5d0\uc11c "
+            "\uc784\ubc15\xb7\uc8fc\uc758 \uc5ec\ubd80\ub97c \ud655\uc778\ud558\uc138\uc694."
+        )
+    else:
+        lines.append("\uc778\uc99d\uc11c \uc8fc\uc758: \uc5c6\uc74c.")
+    return "\n".join(lines).strip()
+
+
 def render_subcheck_detail_lines(r: EndpointResult) -> Tuple[List[str], bool]:
-    """한 개의 체크(리다이렉트 또는 서비스)에 대한 상세 줄. 메시지 잘라내지 않음."""
+    """\ud55c \uac1c\uc758 \uccb4\ud06c(\ub9ac\ub2e4\uc774\ub809\ud2b8 \ub610\ub294 \uc11c\ube44\uc2a4)\uc5d0 \ub300\ud55c \uc0c1\uc138 \uc904. \uba54\uc2dc\uc9c0 \uc798\ub77c\ub0b4\uc9c0 \uc54a\uc74c."""
     cert_warn_hit = False
     lines: List[str] = []
 
-    lines.append(f"기대: `{r.expected}`")
-    lines.append(f"실측: `{r.actual}`")
-    lines.append(f"분류: `{r.status_class}` · 요약: `{r.summary}`")
+    lines.append(f"\uae30\ub300: `{r.expected}`")
+    lines.append(f"\uc2e4\uce21: `{r.actual}`")
+    lines.append(f"\ubd84\ub958: `{r.status_class}` \u00b7 \uc694\uc57d: `{r.summary}`")
 
     if r.consecutive_failures:
-        lines.append(f"연속 실패: `{r.consecutive_failures}`회")
+        lines.append(f"\uc5f0\uc18d \uc2e4\ud328: `{r.consecutive_failures}`\ud68c")
     if r.first_failed_at:
-        lines.append(f"최초 실패 시각: `{r.first_failed_at}`")
+        lines.append(f"\ucd5c\ucd08 \uc2e4\ud328 \uc2dc\uac01: `{r.first_failed_at}`")
     if r.last_ok_at:
-        lines.append(f"직전 정상 시각: `{r.last_ok_at}`")
+        lines.append(f"\uc9c1\uc804 \uc815\uc0c1 \uc2dc\uac01: `{r.last_ok_at}`")
 
     if r.redirect_probe:
         rp = r.redirect_probe
         lines.append(
-            f"첫 응답: status=`{rp.status_code or '-'}` · "
+            f"\uccab \uc751\ub2f5: status=`{rp.status_code or '-'}` \u00b7 "
             f"Location=`{rp.location or '-'}`"
         )
         if rp.err:
-            lines.append(f"첫 응답 오류: `{rp.err}`")
+            lines.append(f"\uccab \uc751\ub2f5 \uc624\ub958: `{rp.err}`")
 
     if r.final_probe:
         fp = r.final_probe
         lines.append(
-            f"최종: status=`{fp.status_code or '-'}` · IP=`{fp.remote_ip or '-'}` · "
+            f"\ucd5c\uc885: status=`{fp.status_code or '-'}` \u00b7 IP=`{fp.remote_ip or '-'}` \u00b7 "
             f"total=`{fp.total_ms if fp.total_ms is not None else '-'}ms`"
         )
 
@@ -1174,18 +1257,18 @@ def render_subcheck_detail_lines(r: EndpointResult) -> Tuple[List[str], bool]:
         if fp.total_ms is not None:
             timing_parts.append(f"Total={fp.total_ms}ms")
         if timing_parts:
-            lines.append(f"타이밍: `{' | '.join(timing_parts)}`")
+            lines.append(f"\ud0c0\uc774\ubc0d: `{' | '.join(timing_parts)}`")
 
         chain_str = redirect_chain_text(fp.redirect_chain)
         if chain_str != "-":
-            lines.append(f"리다이렉트 체인: `{chain_str}`")
+            lines.append(f"\ub9ac\ub2e4\uc774\ub809\ud2b8 \uccb4\uc778: `{chain_str}`")
 
         header_text = headers_pretty(fp.headers or {})
         if header_text and header_text != "-":
-            lines.append(f"응답 헤더: `{header_text}`")
+            lines.append(f"\uc751\ub2f5 \ud5e4\ub354: `{header_text}`")
 
         if fp.err:
-            lines.append(f"오류: `{fp.err}`")
+            lines.append(f"\uc624\ub958: `{fp.err}`")
 
     if r.dns_host:
         lines.append(
@@ -1196,20 +1279,20 @@ def render_subcheck_detail_lines(r: EndpointResult) -> Tuple[List[str], bool]:
     if r.ssl:
         ssl_parts = []
         if r.ssl.notafter:
-            ssl_parts.append(f"만료: `{r.ssl.notafter}`")
+            ssl_parts.append(f"\ub9cc\ub8cc: `{r.ssl.notafter}`")
         if r.ssl.expires_in_days is not None:
             days_left = r.ssl.expires_in_days
             if days_left < 0:
-                ssl_parts.append(f"🚨 만료됨 ({abs(days_left)}일 전)")
+                ssl_parts.append(f"\ub9cc\ub8cc\ub428 ({abs(days_left)}\uc77c \uc804)")
                 cert_warn_hit = True
             elif days_left <= CERT_ALERT_DAYS:
-                ssl_parts.append(f"🚨 남은 {days_left}일")
+                ssl_parts.append(f"\ub9cc\ub8cc \uc784\ubc15: \ub0a8\uc740 {days_left}\uc77c")
                 cert_warn_hit = True
             elif days_left <= CERT_WARN_DAYS:
-                ssl_parts.append(f"⚠️ 남은 {days_left}일")
+                ssl_parts.append(f"\uc8fc\uc758: \ub0a8\uc740 {days_left}\uc77c")
                 cert_warn_hit = True
             else:
-                ssl_parts.append(f"✅ 남은 {days_left}일")
+                ssl_parts.append(f"\uc815\uc0c1: \ub0a8\uc740 {days_left}\uc77c")
         if ssl_parts:
             lines.append(f"SSL: {' | '.join(ssl_parts)}")
         if r.ssl.subject:
@@ -1218,9 +1301,9 @@ def render_subcheck_detail_lines(r: EndpointResult) -> Tuple[List[str], bool]:
             lines.append(f"SSL Issuer: `{r.ssl.issuer}`")
         if r.ssl.san:
             if r.ssl.san_covers_host is True:
-                coverage = " (호스트 SAN 포함)"
+                coverage = " (\ud638\uc2a4\ud2b8 SAN \ud3ec\ud568)"
             elif r.ssl.san_covers_host is False:
-                coverage = " (호스트 SAN 불일치)"
+                coverage = " (\ud638\uc2a4\ud2b8 SAN \ubd88\uc77c\uce58)"
             else:
                 coverage = ""
             lines.append(f"SAN{coverage}: `{', '.join(r.ssl.san)}`")
@@ -1393,9 +1476,6 @@ def slack_post(payload_obj: Dict[str, Any]) -> None:
         _ = resp.read()
 
 
-_SLACK_CHUNK_MARKER_MAX = 40
-
-
 def _chunk_text_for_slack(s: str, first_limit: int, rest_limit: int) -> List[str]:
     if not s:
         return []
@@ -1420,18 +1500,9 @@ def _chunk_text_for_slack(s: str, first_limit: int, rest_limit: int) -> List[str
 
 def _split_slack_messages(full_text: str) -> List[str]:
     max_len = max(500, SLACK_MAX_CHARS)
-    marker_room = max(60, _SLACK_CHUNK_MARKER_MAX)
-    rest_lim = max(100, max_len - marker_room)
     if len(full_text) <= max_len:
         return [full_text]
-    raw_parts = _chunk_text_for_slack(full_text, max_len, rest_lim)
-    if len(raw_parts) <= 1:
-        return raw_parts
-    out = [raw_parts[0]]
-    total = len(raw_parts)
-    for i in range(1, total):
-        out.append(f"【이어쓰기 {i + 1}/{total} · 앞부분 잘림 없음】\n" + raw_parts[i])
-    return out
+    return _chunk_text_for_slack(full_text, max_len, max_len)
 
 
 def slack_post_text_batched(full_text: str, *, attach_image: bool = False) -> None:
@@ -1478,76 +1549,56 @@ def headers_pretty(h: Dict[str, str]) -> str:
 
 
 def build_slack_prefix(results: List[EndpointResult], cert_warn_hit: bool) -> str:
-    lines = [
-        "🐕 *YK Watchdog*",
-        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-    ]
+    lines = ["*YK Watchdog*"]
     if ENABLE_MENTIONS and ALWAYS_MENTION:
         lines.append(f"mentions: {' '.join(ALWAYS_MENTION)}")
 
     if ENABLE_MENTIONS and CHANNEL_MENTION_ON_FAIL:
         if any(not r.ok for r in results) or cert_warn_hit:
-            lines.append("📢 <!channel>")
+            lines.append("<!channel>")
 
     return "\n".join(lines) + "\n\n"
 
 
 def build_resolved_text(results: List[EndpointResult], run_id: str, host: str) -> str:
     lines = [
-        "✅ *전체 복구됨 (All OK)*",
-        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-        f"🆔 `{run_id}` · 🖥️ `{host}` · 🕐 `{now_local_str()}`",
+        "*\uc804\uccb4 \ubcf5\uad6c\ub428*",
+        f"run `{run_id}` \u00b7 host `{host}` \u00b7 `{now_local_str()}`",
         "",
     ]
     for site_label, items in group_endpoint_results(results):
-        roles = []
-        for r in items:
-            roles.append(f"{role_label_for_check(r.type)} ✅")
-        lines.append(f"🟢 *{site_label}*")
-        lines.append(f"   {' · '.join(roles)}")
+        lines.append(f"*{site_label}*  {site_composite_headline(items)}")
         lines.append("")
-    lines.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    lines.append(build_recovery_summary_text(results))
     return "\n".join(lines).strip()
 
 
 def build_slack_text(results: List[EndpointResult], run_id: str, host: str) -> Tuple[str, bool]:
     lines = [
-        "🔍 *헬스체크 리포트*",
-        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-        f"🆔 `{run_id}` · 🖥️ `{host}` · 🕐 `{now_local_str()}`",
-        f"⏱️ 타임아웃 `{HC_TIMEOUT_SEC}s` · 🐌 느림 기준 `≥{HC_SLOW_MS}ms` · 📊 모드 `{REPORT_MODE}`",
-        "",
-        "*사이트별* — 같은 줄의 `루트→www`와 `www 직접`은 한 사이트의 두 단계입니다.",
+        "*\ud5ec\uc2a4\uccb4\ud06c*",
+        f"run `{run_id}` \u00b7 host `{host}` \u00b7 `{now_local_str()}`",
+        f"timeout `{HC_TIMEOUT_SEC}s` \u00b7 slow>=`{HC_SLOW_MS}ms` \u00b7 mode `{REPORT_MODE}`",
         "",
     ]
 
     cert_warn_hit = False
 
     for site_label, items in group_endpoint_results(results):
-        all_ok = all(x.ok for x in items)
-        site_icon = "✅" if all_ok else "❌"
-        lines.append(f"{site_icon} *{site_label}*")
-
-        status_bits = []
-        for x in items:
-            status_bits.append(f"{role_label_for_check(x.type)} {'✅' if x.ok else '❌'}")
-        lines.append(f"   요약: {' · '.join(status_bits)}")
+        site_ok = all(x.ok for x in items)
+        tag = "OK" if site_ok else "FAIL"
+        lines.append(f"*{site_label}* [{tag}]  {site_composite_headline(items)}")
         lines.append("")
-
-        for r in items:
-            sub_icon = "✅" if r.ok else "❌"
-            role = role_label_for_check(r.type)
-            lines.append(f"   {sub_icon} *{role}* (`{r.name}` · `{r.display_name}`)")
+        for role_label, r in _site_check_pairs(items):
+            sub = "OK" if r.ok else "FAIL"
+            lines.append(f"  {role_label} [{sub}]  `{r.name}` \u00b7 `{r.display_name}`")
             detail_lines, cw = render_subcheck_detail_lines(r)
             cert_warn_hit = cert_warn_hit or cw
             for dl in detail_lines:
-                lines.append(f"      · {dl}")
+                lines.append(f"    {dl}")
             lines.append("")
-
-        lines.append("   ———")
         lines.append("")
 
-    lines.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    lines.append(build_issue_summary_text(results))
     text = "\n".join(lines).strip()
     return text, cert_warn_hit
 
@@ -1633,7 +1684,7 @@ def main() -> None:
 
     if reason == "issue_resolved":
         text = build_resolved_text(results, run_id, host)
-        cert_warn_hit = False
+        cert_warn_hit = any(result_has_cert_warning(r) for r in results)
     else:
         text, cert_warn_hit = build_slack_text(results, run_id, host)
 
@@ -1650,10 +1701,9 @@ def main() -> None:
                 append_log(f"[{now_local_str()}] run_id={run_id} restart_report=failed err={repr(exc)}")
 
         restart_header = (
-            "🔄 *재기동 감지 - 현재 상태*\n"
-            f"⏸️ 마지막 실행: `{last_check_time}`\n"
-            f"▶️ 재기동 시간: `{current_time}`\n"
-            "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+            "*\uc7ac\uae30\ub3d9 \ud6c4 \ud604\uc7ac \uc0c1\ud0dc*\n"
+            f"\uc774\uc804 \uc2e4\ud589: `{last_check_time}`\n"
+            f"\uc774\ubc88 \uc2e4\ud589: `{current_time}`\n\n"
         )
         text = restart_header + text
 
