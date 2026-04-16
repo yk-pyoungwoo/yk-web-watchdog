@@ -832,7 +832,7 @@ http {
 	# proxy_cache <ZONE>        : 상단 proxy_cache_path 의 keys_zone 이름과 일치
 	# proxy_cache_methods     : GET, HEAD 만 캐시 (POST 등은 통과만)
 	# proxy_cache_valid 200   : 200 응답 30일 유효
-	# proxy_cache_valid 301 302 308 : 리다이렉트·영구 리다이렉트(308) 응답은 1시간 (Mobon 예약 URL 등)
+	# proxy_cache_valid 301 302 308 : 리다이렉트·영구 리다이렉트(308) 응답은 30일 (약 1달, Mobon 예약 URL 등)
 	# proxy_cache_valid 404   : 동일 구(舊) URL·깨진 _next 해시 등으로 봇이 같은 404를 반복 때 업스트림 부하 완화 (TTL 짧게)
 	# proxy_cache_use_stale   : 업스트림 오류/타임아웃/갱신 중일 때 오래된 캐시 제공
 	# proxy_cache_lock        : 동일 키에 대해 한 worker만 원본 갱신 (캐시 스탬피드 완화)
@@ -954,7 +954,7 @@ http {
 			proxy_cache BRAND_CACHE;
 			proxy_cache_methods GET HEAD;
 			proxy_cache_valid 200 30d;
-			proxy_cache_valid 301 302 308 1h;
+			proxy_cache_valid 301 302 308 30d;
 			proxy_cache_valid 404 5m;
 			proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
 			proxy_cache_lock on;
@@ -1022,7 +1022,7 @@ http {
 			proxy_cache CRIME_CACHE;
 			proxy_cache_methods GET HEAD;
 			proxy_cache_valid 200 30d;
-			proxy_cache_valid 301 302 308 1h;
+			proxy_cache_valid 301 302 308 30d;
 			proxy_cache_valid 404 5m;
 			proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
 			proxy_cache_lock on;
@@ -1084,7 +1084,7 @@ http {
 			proxy_cache DIVORCE_CACHE;
 			proxy_cache_methods GET HEAD;
 			proxy_cache_valid 200 30d;
-			proxy_cache_valid 301 302 308 1h;
+			proxy_cache_valid 301 302 308 30d;
 			proxy_cache_valid 404 5m;
 			proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
 			proxy_cache_lock on;
@@ -1146,7 +1146,7 @@ http {
 			proxy_cache CIVIL_CACHE;
 			proxy_cache_methods GET HEAD;
 			proxy_cache_valid 200 30d;
-			proxy_cache_valid 301 302 308 1h;
+			proxy_cache_valid 301 302 308 30d;
 			proxy_cache_valid 404 5m;
 			proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
 			proxy_cache_lock on;
@@ -1208,7 +1208,7 @@ http {
 			proxy_cache ASSAULT_CACHE;
 			proxy_cache_methods GET HEAD;
 			proxy_cache_valid 200 30d;
-			proxy_cache_valid 301 302 308 1h;
+			proxy_cache_valid 301 302 308 30d;
 			proxy_cache_valid 404 5m;
 			proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
 			proxy_cache_lock on;
@@ -1270,7 +1270,7 @@ http {
 			proxy_cache INHERIT_CACHE;
 			proxy_cache_methods GET HEAD;
 			proxy_cache_valid 200 30d;
-			proxy_cache_valid 301 302 308 1h;
+			proxy_cache_valid 301 302 308 30d;
 			proxy_cache_valid 404 5m;
 			proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
 			proxy_cache_lock on;
@@ -1332,7 +1332,7 @@ http {
 			proxy_cache DRUG_CACHE;
 			proxy_cache_methods GET HEAD;
 			proxy_cache_valid 200 30d;
-			proxy_cache_valid 301 302 308 1h;
+			proxy_cache_valid 301 302 308 30d;
 			proxy_cache_valid 404 5m;
 			proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
 			proxy_cache_lock on;
@@ -1394,7 +1394,7 @@ http {
 			proxy_cache TRAFFIC_CACHE;
 			proxy_cache_methods GET HEAD;
 			proxy_cache_valid 200 30d;
-			proxy_cache_valid 301 302 308 1h;
+			proxy_cache_valid 301 302 308 30d;
 			proxy_cache_valid 404 5m;
 			proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
 			proxy_cache_lock on;
@@ -1456,7 +1456,7 @@ http {
 			proxy_cache SCHOOL_CACHE;
 			proxy_cache_methods GET HEAD;
 			proxy_cache_valid 200 30d;
-			proxy_cache_valid 301 302 308 1h;
+			proxy_cache_valid 301 302 308 30d;
 			proxy_cache_valid 404 5m;
 			proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
 			proxy_cache_lock on;
