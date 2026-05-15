@@ -484,30 +484,191 @@ def should_send_daily_report(state: Dict[str, Any]) -> bool:
         return False
     hour, minute = parse_time_str(DAILY_REPORT_TIME)
     now = now_local()
+    # Fires once per day in a short window (aligned with ~3 min systemd timer).
     return now.hour == hour and minute <= now.minute < minute + 3
 
 
-def build_daily_report(state: Dict[str, Any]) -> Optional[str]:
+def _endpoint_display_names() -> Dict[str, str]:
+    names: Dict[str, str] = {}
+    for ep in ENDPOINTS:
+        key = ep.get("name", "")
+        if key:
+            names[key] = ep.get("display_name") or key
+    return names
+
+
+def _history_rows_for_date(history: List[Any], ymd: str) -> List[Dict[str, Any]]:
+    rows: List[Dict[str, Any]] = []
+    for item in history:
+        if not isinstance(item, dict):
+            continue
+        ts = str(item.get("ts", ""))
+        if ts.startswith(ymd):
+            rows.append(item)
+    rows.sort(key=lambda x: str(x.get("ts", "")))
+    return rows
+
+
+def _incident_episodes(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    episodes: List[Dict[str, Any]] = []
+    current: Optional[Dict[str, Any]] = None
+    for row in rows:
+        ts = str(row.get("ts", ""))
+        if row.get("has_issue"):
+            if current is None:
+                current = {"start": ts, "end": ts, "checks": 1}
+            else:
+                current["end"] = ts
+                current["checks"] += 1
+        elif current is not None:
+            episodes.append(current)
+            current = None
+    if current is not None:
+        episodes.append(current)
+    return episodes
+
+
+def _aggregate_endpoint_failures(
+    rows: List[Dict[str, Any]],
+) -> List[Tuple[str, int, str, str]]:
+    """Return [(endpoint_name, fail_count, display, sample_summary), ...] sorted by count."""
+    display = _endpoint_display_names()
+    counts: Dict[str, int] = {}
+    samples: Dict[str, str] = {}
+    roles: Dict[str, str] = {}
+
+    for row in rows:
+        results = row.get("results")
+        if not isinstance(results, dict):
+            continue
+        for name, info in results.items():
+            if not isinstance(info, dict) or info.get("ok") is not False:
+                continue
+            counts[name] = counts.get(name, 0) + 1
+            if name not in samples:
+                samples[name] = str(info.get("summary", ""))
+            if name not in roles:
+                t = info.get("type", "")
+                roles[name] = role_label_for_check(t, short=True) if t else ""
+
+    ranked = sorted(counts.items(), key=lambda x: (-x[1], x[0]))
+    out: List[Tuple[str, int, str, str]] = []
+    for name, cnt in ranked:
+        disp = display.get(name, name)
+        role = roles.get(name, "")
+        label = f"{role} · `{disp}`" if role else f"`{disp}`"
+        out.append((name, cnt, label, samples.get(name, "")))
+    return out
+
+
+def build_daily_report(state: Dict[str, Any]) -> str:
     g = get_global_state(state)
     history = g.get("_check_history", [])
-    if not isinstance(history, list) or not history:
-        return None
+    if not isinstance(history, list):
+        history = []
 
-    yesterday = (now_local() - timedelta(days=1)).strftime("%Y-%m-%d")
-    rows = [x for x in history if str(x.get("ts", "")).startswith(yesterday)]
-    if not rows:
-        return None
+    report_date = (now_local() - timedelta(days=1)).strftime("%Y-%m-%d")
+    rows = _history_rows_for_date(history, report_date)
 
     total = len(rows)
-    fails = sum(1 for x in rows if x.get("has_issue"))
-    success = total - fails
+    issue_runs = sum(1 for x in rows if x.get("has_issue"))
+    ok_runs = total - issue_runs
+    uptime_pct = (ok_runs / total * 100.0) if total else 100.0
 
-    lines = [
-        "*\uc77c\uc77c \ub9ac\ud3ec\ud2b8*",
-        f"\ub0a0\uc9dc: `{yesterday}`",
-        f"\ucd1d \uac80\uc0ac: `{total}`\ud68c / \uc131\uacf5 `{success}` / \uc2e4\ud328 `{fails}`",
+    endpoint_failures = _aggregate_endpoint_failures(rows)
+    episodes = _incident_episodes(rows)
+
+    header = [
+        "*Daily Incident Report*",
+        f"Report date: `{report_date}` (sent `{now_local_str()}`)",
+        f"Checks recorded: `{total}` (issue runs `{issue_runs}`, clean `{ok_runs}`)",
     ]
-    return "\n".join(lines)
+
+    detail_lines: List[str] = ["*Details*", ""]
+
+    if not rows:
+        detail_lines.append(
+            f"No check history for `{report_date}`. "
+            "The watchdog may have been offline or state was reset."
+        )
+    elif not issue_runs and not endpoint_failures:
+        detail_lines.append(f"No incidents on `{report_date}`. All checks were healthy.")
+    else:
+        detail_lines.append(
+            f"Issue rate: `{issue_runs}/{total}` runs ({uptime_pct:.1f}% clean)."
+        )
+        detail_lines.append("")
+
+        if episodes:
+            detail_lines.append("Incident windows (consecutive issue runs):")
+            for i, ep in enumerate(episodes, 1):
+                detail_lines.append(
+                    f"{i}. `{ep['start']}` → `{ep['end']}` "
+                    f"({ep['checks']} check(s))"
+                )
+            detail_lines.append("")
+
+        if endpoint_failures:
+            detail_lines.append("Endpoints with failures:")
+            for _name, cnt, label, sample in endpoint_failures:
+                line = f"- {label}: `{cnt}` failed check(s)"
+                if sample:
+                    line += f" — last summary `{sample}`"
+                detail_lines.append(line)
+            detail_lines.append("")
+
+    # Current snapshot from persisted endpoint state
+    detail_lines.append("Current endpoint state (as of this report):")
+    failing_now: List[str] = []
+    for ep in ENDPOINTS:
+        name = ep.get("name", "")
+        st = state.get(name, {})
+        if not isinstance(st, dict):
+            continue
+        disp = ep.get("display_name", name)
+        ok = st.get("ok")
+        cf = int(st.get("consecutive_failures", 0) or 0)
+        if ok is False:
+            failing_now.append(
+                f"- `{disp}` (`{name}`): FAIL · consecutive `{cf}` · "
+                f"`{st.get('summary', '-')}`"
+            )
+    if failing_now:
+        detail_lines.extend(failing_now)
+    else:
+        detail_lines.append("- All endpoints OK in state file.")
+
+    summary_lines = ["*Summary*", ""]
+    if not rows:
+        summary_lines.append("No data for the report period.")
+    elif not issue_runs:
+        summary_lines.append(
+            f"`{report_date}`: no incidents. Monitoring healthy ({total} checks)."
+        )
+    else:
+        top = endpoint_failures[0] if endpoint_failures else None
+        summary_lines.append(
+            f"`{report_date}`: `{issue_runs}` issue run(s), "
+            f"`{len(episodes)}` incident window(s), "
+            f"`{len(endpoint_failures)}` endpoint(s) affected."
+        )
+        if top:
+            summary_lines.append(
+                f"Most affected: {top[2]} (`{top[1]}` failed checks)."
+            )
+        if failing_now:
+            summary_lines.append(
+                f"Still failing now: `{len(failing_now)}` endpoint(s) — see Details."
+            )
+        else:
+            summary_lines.append("All endpoints OK at report time.")
+
+    sections = [
+        "\n".join(header).strip(),
+        "\n".join(detail_lines).strip(),
+        "\n".join(summary_lines).strip(),
+    ]
+    return "\n\n".join(sections)
 
 
 def detect_restart(
@@ -1834,6 +1995,10 @@ def main() -> None:
                 append_log(
                     f"[{now_local_str()}] run_id={run_id} daily_report=failed err={repr(exc)}"
                 )
+        else:
+            append_log(
+                f"[{now_local_str()}] run_id={run_id} daily_report=skipped (empty)"
+            )
 
     results = [check_endpoint(ep, state) for ep in ENDPOINTS]
 
