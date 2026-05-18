@@ -54,6 +54,8 @@ def env_csv(key: str, default: str = "") -> List[str]:
 SLACK_WEBHOOK_URL = env_str("SLACK_WEBHOOK_URL")
 if not SLACK_WEBHOOK_URL:
     raise RuntimeError("SLACK_WEBHOOK_URL is required")
+# Incoming webhooks cannot reply in threads (no thread_ts). Use summary messages instead.
+# Threading would require SLACK_BOT_TOKEN + chat.postMessage (not implemented).
 
 SLACK_USERNAME = env_str("SLACK_USERNAME", "YK Web Watchdog")
 SLACK_ICON_EMOJI = env_str("SLACK_ICON_EMOJI", ":dog:")
@@ -1294,6 +1296,43 @@ def result_has_cert_warning(r: EndpointResult) -> bool:
     return d < 0 or d <= CERT_WARN_DAYS
 
 
+def endpoint_is_slow(r: EndpointResult) -> bool:
+    fp = r.final_probe
+    if not fp or fp.total_ms is None:
+        return False
+    return fp.total_ms >= HC_SLOW_MS
+
+
+def endpoint_needs_detail(r: EndpointResult) -> bool:
+    """Include probe/SSL detail in Slack only for failures, TLS ≤30d, or slow responses."""
+    if not r.ok:
+        return True
+    if result_has_cert_warning(r):
+        return True
+    if endpoint_is_slow(r):
+        return True
+    return False
+
+
+def results_need_detail_block(results: List[EndpointResult]) -> bool:
+    return any(endpoint_needs_detail(r) for r in results)
+
+
+def cert_warning_lines(results: List[EndpointResult]) -> List[str]:
+    lines: List[str] = []
+    for r in results:
+        if not result_has_cert_warning(r):
+            continue
+        d = r.ssl.expires_in_days if r.ssl else None
+        who = r.display_name or r.name
+        if d is not None and d < 0:
+            lines.append(f"· `{who}`: expired ({abs(d)}d ago)")
+        elif d is not None:
+            lvl = "critical" if d <= CERT_ALERT_DAYS else "warning"
+            lines.append(f"· `{who}`: {lvl}, {d}d left")
+    return lines
+
+
 def _count_checks_by_role(results: List[EndpointResult]) -> Tuple[int, int, int, int]:
     bare_ok = bare_fail = www_ok = www_fail = 0
     for r in results:
@@ -1360,7 +1399,7 @@ def build_footer_summary_lines(
         if not result_has_cert_warning(r):
             continue
         d = r.ssl.expires_in_days if r.ssl else None
-        who = r.ssl_host or r.display_name or r.name
+        who = r.display_name or r.name
         if d is not None and d < 0:
             cert_lines.append(
                 f"- *{r.site_label}* / `{who}`: expired ({abs(d)}d ago)"
@@ -1391,15 +1430,23 @@ def build_run_meta_lines(run_id: str, host: str) -> List[str]:
 
 def build_site_details_lines(
     results: List[EndpointResult],
+    *,
+    only_notable: bool = False,
 ) -> Tuple[List[str], bool]:
     lines: List[str] = []
     cert_warn_hit = False
     for site_label, items in group_endpoint_results(results):
+        pairs = _site_check_pairs(items)
+        if only_notable:
+            pairs = [(lbl, r) for lbl, r in pairs if endpoint_needs_detail(r)]
+            if not pairs:
+                continue
+
         site_ok = all(x.ok for x in items)
         tag = "OK" if site_ok else "FAIL"
         lines.append(f"*{site_label}* [{tag}]  {site_composite_headline(items)}")
         lines.append("")
-        for role_label, r in _site_check_pairs(items):
+        for role_label, r in pairs:
             sub = "OK" if r.ok else "FAIL"
             lines.append(
                 f"  {role_label} [{sub}]  `{r.name}` \u00b7 `{r.display_name}`"
@@ -1421,21 +1468,33 @@ def build_slack_report(
     title: str,
     subtitle: str = "",
     summary_kind: str,
+    detail_mode: str = "auto",
 ) -> Tuple[str, bool]:
-    """Uniform Slack body: header → details → summary (summary always last)."""
+    """
+    Slack body: header → optional details → summary (summary always last).
+    detail_mode: summary (compact), auto (details only if notable), full (all probes).
+    """
+    cert_warn_hit = any(result_has_cert_warning(r) for r in results)
     header: List[str] = [f"*{title}*"]
     if subtitle:
         header.append(subtitle)
-    header.extend(build_run_meta_lines(run_id, host))
+    if detail_mode != "summary":
+        header.extend(build_run_meta_lines(run_id, host))
 
-    detail_lines, cert_warn_hit = build_site_details_lines(results)
     summary_lines = build_footer_summary_lines(results, kind=summary_kind)
+    sections: List[str] = ["\n".join(header).strip()]
 
-    sections = [
-        "\n".join(header).strip(),
-        "*Details*\n\n" + "\n".join(detail_lines).strip(),
-        "*Summary*\n\n" + "\n".join(summary_lines).strip(),
-    ]
+    include_details = detail_mode == "full" or (
+        detail_mode == "auto" and results_need_detail_block(results)
+    )
+    if include_details:
+        only_notable = detail_mode != "full"
+        detail_lines, cw = build_site_details_lines(results, only_notable=only_notable)
+        cert_warn_hit = cert_warn_hit or cw
+        if detail_lines:
+            sections.append("*Details*\n\n" + "\n".join(detail_lines).strip())
+
+    sections.append("*Summary*\n\n" + "\n".join(summary_lines).strip())
     return "\n\n".join(sections), cert_warn_hit
 
 
@@ -1750,9 +1809,9 @@ def maybe_run_ok_heartbeat_slack(
         return
 
     try:
-        text = build_ok_heartbeat_text(results, run_id, host)
+        text, cert_warn_hit = build_ok_heartbeat_text(results, run_id, host)
         slack_post_text_batched(
-            build_slack_prefix(results, False) + text,
+            build_slack_prefix(results, cert_warn_hit) + text,
             attach_image=False,
         )
         g["last_ok_heartbeat_sent_at"] = current_time
@@ -1766,19 +1825,27 @@ def maybe_run_ok_heartbeat_slack(
 
 def build_ok_heartbeat_text(
     results: List[EndpointResult], run_id: str, host: str
-) -> str:
-    text, _ = build_slack_report(
-        results,
-        run_id,
-        host,
-        title="Monitoring OK",
-        subtitle=(
-            f"Periodic heartbeat; all `{len(results)}` endpoint checks passed. "
-            f"Next heartbeat about every `{OK_HEARTBEAT_INTERVAL_SEC // 60}` minutes."
+) -> Tuple[str, bool]:
+    """Hourly all-OK message: short site lines only; TLS detail if ≤30d."""
+    cert_warn_hit = any(result_has_cert_warning(r) for r in results)
+    lines: List[str] = [
+        "*Monitoring OK*",
+        (
+            f"`{now_local_str()}` · host `{host}` · all `{len(results)}` checks passed "
+            f"· next ~`{OK_HEARTBEAT_INTERVAL_SEC // 60}` min"
         ),
-        summary_kind="heartbeat",
-    )
-    return text
+        "",
+    ]
+    for site_label, items in group_endpoint_results(results):
+        lines.append(f"· *{site_label}* — {site_composite_headline(items)}")
+
+    cert_lines = cert_warning_lines(results)
+    if cert_lines:
+        lines.append("")
+        lines.append("*TLS (≤30d)*")
+        lines.extend(cert_lines)
+
+    return "\n".join(lines).strip(), cert_warn_hit
 
 
 # =========================================================
@@ -1940,6 +2007,7 @@ def build_slack_prefix(results: List[EndpointResult], cert_warn_hit: bool) -> st
 
 
 def build_resolved_text(results: List[EndpointResult], run_id: str, host: str) -> str:
+    mode = "auto" if results_need_detail_block(results) else "summary"
     text, _ = build_slack_report(
         results,
         run_id,
@@ -1947,14 +2015,28 @@ def build_resolved_text(results: List[EndpointResult], run_id: str, host: str) -
         title="Recovered",
         subtitle="All endpoints are healthy again.",
         summary_kind="recovery",
+        detail_mode=mode,
     )
     return text
 
 
 def build_slack_text(
-    results: List[EndpointResult], run_id: str, host: str
+    results: List[EndpointResult],
+    run_id: str,
+    host: str,
+    *,
+    reason: str = "",
 ) -> Tuple[str, bool]:
     has_fail = any(not r.ok for r in results)
+    if reason == "issue_persists":
+        detail_mode = "summary"
+    elif reason in ("issue_detected", "restart_detected"):
+        detail_mode = "auto"
+    elif has_fail:
+        detail_mode = "auto"
+    else:
+        detail_mode = "summary"
+
     return build_slack_report(
         results,
         run_id,
@@ -1962,6 +2044,7 @@ def build_slack_text(
         title="Healthcheck",
         subtitle="Issue detected." if has_fail else "Status update.",
         summary_kind="issue" if has_fail else "ok",
+        detail_mode=detail_mode,
     )
 
 
@@ -2064,7 +2147,7 @@ def main() -> None:
         text = build_resolved_text(results, run_id, host)
         cert_warn_hit = any(result_has_cert_warning(r) for r in results)
     else:
-        text, cert_warn_hit = build_slack_text(results, run_id, host)
+        text, cert_warn_hit = build_slack_text(results, run_id, host, reason=reason)
 
     if is_restart and last_check_time:
         restart_report = build_restart_report(state, last_check_time, current_time)
