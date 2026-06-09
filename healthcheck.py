@@ -92,13 +92,12 @@ DAILY_REPORT_ENABLED = env_bool("DAILY_REPORT_ENABLED", True)
 DAILY_REPORT_TIME = env_str("DAILY_REPORT_TIME", "09:00")
 
 # Notification policy (checks run every ~3 min via systemd; Slack is separate):
-# - All OK: heartbeat only, every OK_HEARTBEAT_INTERVAL_SEC (default 1h).
+# - All OK: heartbeat once per hour at the top of the hour (minute 0–2 window).
 # - First failure: alert immediately (issue_detected).
 # - Still failing after ISSUE_REPEAT_MIN_FAILURES consecutive checks: alert again, then
 #   every ISSUE_REMINDER_INTERVAL_SEC until recovered (issue_persists).
 # - Recovery: one alert (issue_resolved).
 # REPORT_MODE=always sends on every check (not recommended).
-OK_HEARTBEAT_INTERVAL_SEC = env_int("OK_HEARTBEAT_INTERVAL_SEC", 3600)
 ISSUE_REPEAT_MIN_FAILURES = env_int("ISSUE_REPEAT_MIN_FAILURES", 2)
 ISSUE_REMINDER_INTERVAL_SEC = env_int("ISSUE_REMINDER_INTERVAL_SEC", 180)
 
@@ -1778,10 +1777,17 @@ def should_notify(
     return (len(changed) > 0), ("; ".join(changed) if changed else "no_change")
 
 
-def ok_heartbeat_seconds_since_last(
-    g: Dict[str, Any], current_time_str: str
-) -> Optional[float]:
-    return seconds_since_timestamp(current_time_str, g.get("last_ok_heartbeat_sent_at"))
+def ok_heartbeat_hour_key() -> str:
+    return now_local().strftime("%Y-%m-%d-%H")
+
+
+def should_send_ok_heartbeat(state: Dict[str, Any]) -> bool:
+    """Fire once per hour in the first ~3 min window (aligned with systemd timer)."""
+    now = now_local()
+    if now.minute >= 3:
+        return False
+    g = get_global_state(state)
+    return g.get("last_ok_heartbeat_hour", "") != ok_heartbeat_hour_key()
 
 
 def maybe_run_ok_heartbeat_slack(
@@ -1797,25 +1803,17 @@ def maybe_run_ok_heartbeat_slack(
     if has_issue_now or notify or REPORT_MODE == "always":
         return
 
+    if not should_send_ok_heartbeat(state):
+        return
+
     g = get_global_state(state)
-    elapsed = ok_heartbeat_seconds_since_last(g, current_time)
-    if elapsed is None:
-        g["last_ok_heartbeat_sent_at"] = current_time
-        save_state(state)
-        append_log(
-            f"[{now_local_str()}] run_id={run_id} ok_heartbeat=clock_started at={current_time}"
-        )
-        return
-
-    if elapsed < OK_HEARTBEAT_INTERVAL_SEC:
-        return
-
     try:
         text, cert_warn_hit = build_ok_heartbeat_text(results, run_id, host)
         slack_post_text_batched(
             build_slack_prefix(results, cert_warn_hit) + text,
             attach_image=False,
         )
+        g["last_ok_heartbeat_hour"] = ok_heartbeat_hour_key()
         g["last_ok_heartbeat_sent_at"] = current_time
         save_state(state)
         append_log(f"[{now_local_str()}] run_id={run_id} ok_heartbeat=sent")
@@ -2176,6 +2174,7 @@ def main() -> None:
         if has_issue_now:
             mark_issue_alert_sent(g, current_time)
         else:
+            g["last_ok_heartbeat_hour"] = ok_heartbeat_hour_key()
             g["last_ok_heartbeat_sent_at"] = current_time
         save_state(state)
     except Exception as exc:
