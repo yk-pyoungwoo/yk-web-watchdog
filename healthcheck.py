@@ -141,8 +141,8 @@ SITE_HOSTS: List[Tuple[str, str, str]] = [
     ("drug", "yklawfirm-drug.co.kr", "www.yklawfirm-drug.co.kr"),
     ("traffic", "yklawfirm-traffic.co.kr", "www.yklawfirm-traffic.co.kr"),
     ("school", "yklawfirm-school.co.kr", "www.yklawfirm-school.co.kr"),
-    {"estate", "yklawfirm-estate.co.kr", "www.yklawfirm-estate.co.kr"},
-    {"military", "yklawfirm-military.co.kr", "www.yklawfirm-military.co.kr"},    
+    ("estate", "yklawfirm-estate.co.kr", "www.yklawfirm-estate.co.kr"),
+    ("military", "yklawfirm-military.co.kr", "www.yklawfirm-military.co.kr"),    
 ]
 
 
