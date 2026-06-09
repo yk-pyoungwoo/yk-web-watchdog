@@ -2111,7 +2111,7 @@ def main() -> None:
     # g["has_issue"] before this call, prev_has_issue always equals has_issue_now and
     # issue_detected / issue_resolved never fire correctly.
     notify, reason = should_notify(results, state, current_time)
-    if is_restart and last_check_time:
+    if is_restart:
         notify = True
         reason = "restart_detected"
 
@@ -2163,11 +2163,13 @@ def main() -> None:
     if reason == "issue_resolved":
         text = build_resolved_text(results, run_id, host)
         cert_warn_hit = any(result_has_cert_warning(r) for r in results)
-    elif reason == "restart_detected" and last_check_time:
-        text = build_restart_notice_text(host, last_check_time, current_time, results)
-        gap_report = build_restart_report(state, last_check_time, current_time)
-        if gap_report:
-            text = gap_report + "\n\n" + text
+    elif reason == "restart_detected":
+        prev_check = last_check_time or "(이전 기록 없음)"
+        text = build_restart_notice_text(host, prev_check, current_time, results)
+        if last_check_time:
+            gap_report = build_restart_report(state, last_check_time, current_time)
+            if gap_report:
+                text = gap_report + "\n\n" + text
         if has_issue_now:
             detail, cert_warn_hit = build_slack_text(
                 results, run_id, host, reason=reason
