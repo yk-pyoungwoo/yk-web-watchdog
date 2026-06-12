@@ -97,7 +97,8 @@ DAILY_REPORT_TIME = env_str("DAILY_REPORT_TIME", "09:00")
 
 # Notification policy (checks run every ~3 min via systemd; Slack is separate):
 # - All OK: heartbeat once per hour at the top of the hour (minute 0–2 window).
-# - Restart/resume after >5 min gap (or ./run/restart.sh): restart_detected alert.
+# - Restart/resume after >5 min gap (or ./run/restart.sh): restart_detected alert to main
+#   channel plus a resume heartbeat to SLACK_HEARTBEAT_WEBHOOK_URL.
 # - First failure: alert immediately (issue_detected).
 # - Still failing after ISSUE_REPEAT_MIN_FAILURES consecutive checks: alert again, then
 #   every ISSUE_REMINDER_INTERVAL_SEC until recovered (issue_persists).
@@ -1816,6 +1817,58 @@ def should_send_ok_heartbeat(state: Dict[str, Any]) -> bool:
     return g.get("last_ok_heartbeat_hour", "") != ok_heartbeat_hour_key()
 
 
+def build_restart_heartbeat_text(
+    results: List[EndpointResult], host: str, *, has_issue_now: bool
+) -> Tuple[str, bool]:
+    """Restart confirmation for the heartbeat channel (script resumed)."""
+    cert_warn_hit = any(result_has_cert_warning(r) for r in results)
+    n_checks = len(results)
+    fail_n = sum(1 for r in results if not r.ok)
+    line = (
+        f"*Watchdog resumed* · `{now_local_str()}` · host `{host}` · "
+        f"script OK"
+    )
+    if has_issue_now:
+        line += f" · `{fail_n}`/`{n_checks}` checks failing"
+    else:
+        line += f" · all `{n_checks}` checks passed"
+    cert_n = sum(1 for r in results if result_has_cert_warning(r))
+    if cert_n:
+        w = "warning" if cert_n == 1 else "warnings"
+        line += f" · TLS certificate: `{cert_n}` {w}"
+    return line, cert_warn_hit
+
+
+def maybe_run_restart_heartbeat_slack(
+    state: Dict[str, Any],
+    results: List[EndpointResult],
+    *,
+    run_id: str,
+    host: str,
+    current_time: str,
+    has_issue_now: bool,
+) -> None:
+    g = get_global_state(state)
+    try:
+        text, cert_warn_hit = build_restart_heartbeat_text(
+            results, host, has_issue_now=has_issue_now
+        )
+        slack_post_text_batched(
+            build_slack_prefix(results, cert_warn_hit) + text,
+            attach_image=False,
+            webhook_url=SLACK_HEARTBEAT_WEBHOOK_URL,
+        )
+        g["last_ok_heartbeat_sent_at"] = current_time
+        if not has_issue_now:
+            g["last_ok_heartbeat_hour"] = ok_heartbeat_hour_key()
+        save_state(state)
+        append_log(f"[{now_local_str()}] run_id={run_id} restart_heartbeat=sent")
+    except Exception as exc:
+        append_log(
+            f"[{now_local_str()}] run_id={run_id} restart_heartbeat=failed err={repr(exc)}"
+        )
+
+
 def maybe_run_ok_heartbeat_slack(
     state: Dict[str, Any],
     results: List[EndpointResult],
@@ -1825,8 +1878,9 @@ def maybe_run_ok_heartbeat_slack(
     current_time: str,
     notify: bool,
     has_issue_now: bool,
+    is_restart: bool,
 ) -> None:
-    if has_issue_now or notify or REPORT_MODE == "always":
+    if is_restart or has_issue_now or notify or REPORT_MODE == "always":
         return
 
     if not should_send_ok_heartbeat(state):
@@ -2158,6 +2212,16 @@ def main() -> None:
     append_log(f"[{now_local_str()}] run_id={run_id} notify={notify} reason={reason}")
     save_state(state)
 
+    if is_restart:
+        maybe_run_restart_heartbeat_slack(
+            state,
+            results,
+            run_id=run_id,
+            host=host,
+            current_time=current_time,
+            has_issue_now=has_issue_now,
+        )
+
     maybe_run_ok_heartbeat_slack(
         state,
         results,
@@ -2166,6 +2230,7 @@ def main() -> None:
         current_time=current_time,
         notify=notify,
         has_issue_now=has_issue_now,
+        is_restart=is_restart,
     )
 
     if not notify:
