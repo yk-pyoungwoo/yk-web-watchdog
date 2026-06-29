@@ -10,7 +10,7 @@ import urllib.parse
 import urllib.request
 from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 
 # =========================================================
@@ -103,8 +103,8 @@ DAILY_REPORT_TIME = env_str("DAILY_REPORT_TIME", "09:00")
 
 # Notification policy (checks run every ~3 min via systemd; Slack is separate):
 # - All OK: heartbeat once per hour at the top of the hour (minute 0–2 window).
-# - Restart/resume after >5 min gap (or ./run/restart.sh): restart_detected alert to main
-#   channel plus a resume heartbeat to SLACK_HEARTBEAT_WEBHOOK_URL.
+# - Restart/resume after >5 min gap (or ./run/restart.sh): full restart alert to both
+#   SLACK_WEBHOOK_URL and SLACK_HEARTBEAT_WEBHOOK_URL (deduped if URLs match).
 # - First failure: alert immediately (issue_detected).
 # - Still failing after ISSUE_REPEAT_MIN_FAILURES consecutive checks: alert again, then
 #   every ISSUE_REMINDER_INTERVAL_SEC until recovered (issue_persists).
@@ -1871,28 +1871,6 @@ def should_send_ok_heartbeat(state: Dict[str, Any]) -> bool:
     return g.get("last_ok_heartbeat_hour", "") != ok_heartbeat_hour_key()
 
 
-def build_restart_heartbeat_text(
-    results: List[EndpointResult], host: str, *, has_issue_now: bool
-) -> Tuple[str, bool]:
-    """Restart confirmation for the heartbeat channel (script resumed)."""
-    cert_warn_hit = any(result_has_cert_warning(r) for r in results)
-    n_checks = len(results)
-    fail_n = sum(1 for r in results if not r.ok)
-    line = (
-        f"*Watchdog resumed* · `{now_local_str()}` · host `{host}` · "
-        f"script OK"
-    )
-    if has_issue_now:
-        line += f" · `{fail_n}`/`{n_checks}` checks failing"
-    else:
-        line += f" · all `{n_checks}` checks passed"
-    cert_n = sum(1 for r in results if result_has_cert_warning(r))
-    if cert_n:
-        w = "warning" if cert_n == 1 else "warnings"
-        line += f" · TLS certificate: `{cert_n}` {w}"
-    return line, cert_warn_hit
-
-
 def send_restart_slack_alerts(
     state: Dict[str, Any],
     results: List[EndpointResult],
@@ -1920,37 +1898,43 @@ def send_restart_slack_alerts(
         )
         main_text = main_text + "\n\n" + detail
 
-    heartbeat_text, hb_cert_warn = build_restart_heartbeat_text(
-        results, host, has_issue_now=has_issue_now
-    )
     main_prefix = build_slack_prefix(
         results, cert_warn_hit, include_issue_cc=has_issue_now
     )
-    heartbeat_prefix = build_slack_prefix(results, hb_cert_warn, include_issue_cc=False)
+    heartbeat_prefix = build_slack_prefix(
+        results, cert_warn_hit, include_issue_cc=False
+    )
 
-    try:
-        slack_post_text_batched(
-            main_prefix + main_text,
-            attach_image=bool(SLACK_IMAGE_URL and SLACK_POST_MODE == "json"),
-            webhook_url=SLACK_WEBHOOK_URL,
-        )
-        append_log(f"[{now_local_str()}] run_id={run_id} restart_main=sent")
-    except Exception as exc:
-        append_log(
-            f"[{now_local_str()}] run_id={run_id} restart_main=failed err={repr(exc)}"
-        )
-
-    try:
-        slack_post_text_batched(
-            heartbeat_prefix + heartbeat_text,
-            attach_image=False,
-            webhook_url=SLACK_HEARTBEAT_WEBHOOK_URL,
-        )
-        append_log(f"[{now_local_str()}] run_id={run_id} restart_heartbeat=sent")
-    except Exception as exc:
-        append_log(
-            f"[{now_local_str()}] run_id={run_id} restart_heartbeat=failed err={repr(exc)}"
-        )
+    restart_channels: List[Tuple[str, str, str, bool]] = [
+        ("restart_main", SLACK_WEBHOOK_URL, main_prefix, True),
+        (
+            "restart_heartbeat",
+            SLACK_HEARTBEAT_WEBHOOK_URL,
+            heartbeat_prefix,
+            False,
+        ),
+    ]
+    seen_webhooks: Set[str] = set()
+    for label, webhook_url, prefix, attach_image in restart_channels:
+        if webhook_url in seen_webhooks:
+            append_log(
+                f"[{now_local_str()}] run_id={run_id} {label}=skipped "
+                f"(duplicate webhook)"
+            )
+            continue
+        seen_webhooks.add(webhook_url)
+        try:
+            slack_post_text_batched(
+                prefix + main_text,
+                attach_image=attach_image
+                and bool(SLACK_IMAGE_URL and SLACK_POST_MODE == "json"),
+                webhook_url=webhook_url,
+            )
+            append_log(f"[{now_local_str()}] run_id={run_id} {label}=sent")
+        except Exception as exc:
+            append_log(
+                f"[{now_local_str()}] run_id={run_id} {label}=failed err={repr(exc)}"
+            )
 
     if has_issue_now:
         mark_issue_alert_sent(g, current_time)
