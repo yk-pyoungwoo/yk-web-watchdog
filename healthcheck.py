@@ -155,7 +155,19 @@ SITE_HOSTS: List[Tuple[str, str, str]] = [
     ("estate", "yklawfirm-estate.co.kr", "www.yklawfirm-estate.co.kr"),
     ("military", "yklawfirm-military.co.kr", "www.yklawfirm-military.co.kr"),    
     ("regeneration", "yklawfirm-regeneration.co.kr", "www.yklawfirm-regeneration.co.kr"),    
-    ("medical", "yklawfirm-medical.co.kr", "www.yklawfirm-medical.co.kr"),    
+    ("medical", "yklawfirm-medical.co.kr", "www.yklawfirm-medical.co.kr"),
+]
+
+# (site_key, punycode host, display label)
+CLONE_SITES: List[Tuple[str, str, str]] = [
+    ("crime-clone-center", "xn--yk-4q4jsse25dzwg.com", "YK형사센터.com"),
+    ("crime-clone-lawyer", "xn--yk-291jq3kba7993acha.com", "YK형사변호사.com"),
+    ("drug-clone-center", "xn--yk-xf0jg0wtpfqnu.com", "YK마약센터.com"),
+    ("drug-clone-lawyer", "xn--yk-xf0j71hprgltiwt5a.com", "YK마약변호사.com"),
+    ("divorce-clone-center", "xn--yk-h34jm9rbsnplh.com", "YK이혼센터.com"),
+    ("divorce-clone-lawyer", "xn--yk-291jr3k7rkb6w0a.com", "YK이혼변호사.com"),
+    ("assault-clone-center", "xn--yk-b61jl6mvb553eilo.com", "YK성범죄센터.com"),
+    ("assault-clone-lawyer", "xn--yk-b61jvf26qzwa310bih0a.com", "YK성범죄변호사.com"),
 ]
 
 
@@ -183,6 +195,20 @@ def _endpoint_pair(site_key: str, bare_host: str, www_host: str) -> List[Dict[st
     ]
 
 
+def _clone_endpoint(site_key: str, punycode_host: str, display_label: str) -> Dict[str, Any]:
+    return {
+        "name": site_key,
+        "display_name": display_label,
+        "site_group": site_key,
+        "site_label": display_label,
+        "type": "service",
+        "url": f"https://{punycode_host}/",
+        "expect_status": SERVICE_EXPECT_STATUS,
+        "dns_host": punycode_host,
+        "ssl_host": punycode_host,
+    }
+
+
 def _legacy_endpoint_renames() -> Dict[str, str]:
     renames: Dict[str, str] = {}
     for site_key, _, _ in SITE_HOSTS:
@@ -197,6 +223,8 @@ def _legacy_endpoint_renames() -> Dict[str, str]:
 DEFAULT_ENDPOINTS: List[Dict[str, Any]] = []
 for _site_key, _bare_host, _www_host in SITE_HOSTS:
     DEFAULT_ENDPOINTS.extend(_endpoint_pair(_site_key, _bare_host, _www_host))
+for _sk, _puny, _label in CLONE_SITES:
+    DEFAULT_ENDPOINTS.append(_clone_endpoint(_sk, _puny, _label))
 
 
 def load_endpoints() -> List[Dict[str, Any]]:
